@@ -1,0 +1,23 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:12.16
+
+    steps:
+      - checkout
+
+      - run:
+          name: Set up build
+          command: bin/toolchain.js setup-ci
+
+      - run:
+          name: Install Dependencies
+          command: yarn install --frozen-lockfile
+
+      - run:
+          name: build
+          command: yarn prepublishOnly
+      - run:
+          name: release
+          command: semantic-release || true

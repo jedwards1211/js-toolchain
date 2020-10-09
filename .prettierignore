@@ -1,0 +1,5 @@
+test/expected-dist/
+node_modules
+.nyc_output
+coverage
+dist
