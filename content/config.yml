@@ -15,7 +15,7 @@ jobs:
             yarn config set registry "https://registry.npmjs.org/"
             echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
             echo "registry=https://registry.npmjs.org/" >> .npmrc
-            [[ -e .flowconfig ]] && echo "server.max_workers=1" >> .flowconfig
+            if [[ -e .flowconfig ]]; then echo "server.max_workers=1" >> .flowconfig; fi
 
       - run:
           name: Install Dependencies
