@@ -9,7 +9,11 @@ jobs:
 
       - run:
           name: Set up build
-          command: bin/toolchain.js setup-ci
+          command: |
+            yarn config set registry "https://registry.npmjs.org/"
+            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+            echo "registry=https://registry.npmjs.org/" >> .npmrc
+            [[ -e .flowconfig ]] && echo "server.max_workers=1" >> .flowconfig
 
       - run:
           name: Install Dependencies

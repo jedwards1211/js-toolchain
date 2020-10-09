@@ -92,13 +92,6 @@ if (require.main === module) {
     'open:coverage': () => `${bin('open-cli')} coverage/lcov-report/index.html`,
     codecov: () =>
       `${nyc()} report --reporter=text-lcov > coverage.lcov; ${bin('codecov')}`,
-    'setup-ci': () =>
-      commands(
-        'yarn config set registry "https://registry.npmjs.org/"',
-        'echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc',
-        'echo "registry=https://registry.npmjs.org/" >> .npmrc',
-        isFlow && 'echo "server.max_workers=1" >> .flowconfig'
-      ),
     release: () => commands('cd dist', bin('semantic-release')),
     bootstrap: () => require.resolve('../util/bootstrap'),
   }
