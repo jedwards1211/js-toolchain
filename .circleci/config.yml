@@ -24,4 +24,4 @@ jobs:
           command: yarn prepublishOnly
       - run:
           name: release
-          command: semantic-release || true
+          command: yarn semantic-release || true

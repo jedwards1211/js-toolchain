@@ -9,7 +9,8 @@
     "toolchain": "./bin/toolchain.js"
   },
   "scripts": {
-    "prepublishOnly": "bin/toolchain.js check && bin/toolchain.js test"
+    "prepublishOnly": "bin/toolchain.js check && bin/toolchain.js test",
+    "semantic-release": "semantic-release"
   },
   "husky": {
     "hooks": {
