@@ -5,6 +5,17 @@
   "main": "index.js",
   "author": "Andy Edwards",
   "license": "MIT",
+  "files": [
+    "bin",
+    "content",
+    "util",
+    ".babelrc.js",
+    ".nyc.config-host.js",
+    ".nyc.config.js",
+    ".prettierrc.js",
+    "commitlint.config.js",
+    "lint-staged.config.js"
+  ],
   "bin": {
     "toolchain": "./bin/toolchain.js"
   },
