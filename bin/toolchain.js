@@ -47,6 +47,15 @@ const lintStaged = () =>
 const commitlint = () =>
   `${bin('commitlint')} --config ${root('commitlint.config.js')}`
 
+const getCiUrl = () => {
+  const repoUrl = hostPackageJson.repository
+    ? hostPackageJson.repository.url
+    : ''
+  const match = /github\.com\/([^/]+)\/([^/.]+)/.exec(repoUrl)
+  if (!match) throw new Error(`failed to parse repository.url in package.json`)
+  return `https://app.circleci.com/pipelines/github/${match[1]}/${match[2]}`
+}
+
 exports.prettier = prettier
 exports.eslint = eslint
 
@@ -92,6 +101,7 @@ if (require.main === module) {
       commands(lintStaged(), isFlow && 'flow', isTypescript && 'typescript'),
     commitlint,
     'open:coverage': () => `${bin('open-cli')} coverage/lcov-report/index.html`,
+    'open:ci': () => `${bin('open-cli')} ${getCiUrl()}`,
     codecov: () =>
       `${nyc()} report --reporter=text-lcov > coverage.lcov; ${bin('codecov')}`,
     release: () => commands('cd dist', bin('semantic-release')),

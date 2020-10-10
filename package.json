@@ -27,6 +27,23 @@
     "semantic-release": "semantic-release",
     "postinstall": "node util/addScripts.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jedwards1211/js-toolchain.git"
+  },
+  "keywords": [
+    "immutable",
+    "deep",
+    "json",
+    "mutations",
+    "update",
+    "update-in",
+    "set-in"
+  ],
+  "bugs": {
+    "url": "https://github.com/jedwards1211/js-toolchain/issues"
+  },
+  "homepage": "https://github.com/jedwards1211/js-toolchain#readme",
   "husky": {
     "hooks": {
       "pre-commit": "./bin/toolchain.js pre-commit",
@@ -37,7 +54,10 @@
     "access": "public"
   },
   "config": {
-    "mocha": "test/index.js"
+    "mocha": "test/index.js",
+    "commitizen": {
+      "path": "cz-coventional-changelog"
+    }
   },
   "dependencies": {
     "@babel/cli": "^7.11.6",
