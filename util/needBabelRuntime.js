@@ -37,7 +37,7 @@ module.exports = async function needBabelRuntime(dist) {
         processSource(path.get('source'))
       },
     })
-    if (babelRuntimeFound) return true
+    if (babelRuntimeFound) break
   }
-  return false
+  return babelRuntimeFound
 }
