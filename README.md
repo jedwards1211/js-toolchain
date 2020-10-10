@@ -28,3 +28,29 @@ just proxies for the config in `@jedwards1211/js-toolchain`.
 
 Instead of running scripts from your `package.json`, you can run them with the `yarn toolchain` command (or `yarn tc`), for example `yarn toolchain lint`. Run `yarn toolchain` by itself
 to see all of the available commands.
+
+## Package Publishing
+
+Files to publish are output/copied into the `dist` folder and then published from there. This includes a derived
+`package.json` with various development-only fields removed and automatically-generated `main`, `module`, and `exports` fields added.
+
+The toolchain will do the following:
+
+- Transpile `src/**.js` to `dist/**.js` (CommonJS modules)
+- Transpile `src/**.js` to `dist/**.mjs` (ES modules)
+- Copy `src/**.js.flow` to `dist`
+- Copy `src/**.d.ts` to `dist`
+- Copy `*.md` to `dist`
+- Copy `package.json` to `dist` with modifications:
+  - `main` from root `package.json` or auto-generated value
+  - `module` from root `package.json` or auto-generated value
+  - `exports` from root `package.json` or auto-generated value
+  - `@babel/runtime` will be added or removed from `dependencies` depending on whether any output code requires it
+  - Removed keys:
+    - `devDependencies`
+    - `husky`
+    - `files`
+    - `lint-staged`
+    - `nyc`
+    - `config`
+    - `scripts.prepublishOnly`
