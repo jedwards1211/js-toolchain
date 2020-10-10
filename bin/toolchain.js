@@ -93,7 +93,12 @@ if (require.main === module) {
     codecov: () =>
       `${nyc()} report --reporter=text-lcov > coverage.lcov; ${bin('codecov')}`,
     release: () => commands('cd dist', bin('semantic-release')),
-    bootstrap: () => require.resolve('../util/bootstrap'),
+    bootstrap: () =>
+      commands(
+        require.resolve('../util/bootstrap'),
+        `${__filename} install-husky`,
+        `${__filename} format`
+      ),
     'install-husky': () =>
       `${process.execPath} node_modules/husky/husky.js install`,
   }
