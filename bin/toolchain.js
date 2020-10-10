@@ -84,6 +84,7 @@ if (require.main === module) {
         )} BABEL_ENV=mjs ${babel()} src --out-dir dist --out-file-extension .mjs`,
         isFlow && require.resolve('../util/copyFlowDefs'),
         isTypescript && require.resolve('../util/copyTsDefs'),
+        require.resolve('../util/copyOtherFilesToDist'),
         require.resolve('../util/buildDistPackageJson')
       ),
     test: () =>
