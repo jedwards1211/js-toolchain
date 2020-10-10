@@ -11,6 +11,7 @@ const hostPrettierignore = fs.existsSync('.prettierignore')
 const hostEslintignore = fs.existsSync('.eslintignore')
 const hostPackageJson = require('../util/hostPackageJson')
 const toolchainPackageJson = require('../package.json')
+const runBabel = require('../util/runBabel')
 const { name: toolchainName, version: toolchainVersion } = toolchainPackageJson
 
 const buildingSelf = process.cwd() === path.resolve(__dirname, '..')
@@ -52,8 +53,6 @@ const eslintArgs = [
 exports.eslintShellCommand = `${bin('eslint')} ${eslintArgs.join(' ')}`
 
 const eslint = spawnable(bin('eslint'), eslintArgs)
-
-const babel = spawnable(bin('babel'), ['--config-file', root('.babelrc.js')])
 
 const mochaArgs = () => [
   '-r',
@@ -125,11 +124,17 @@ const scripts = {
     description: 'build everything to publish to dist directory',
     run: async () => {
       await scripts.clean.run()
-      await babel(['src', '--out-dir', 'dist', '--out-file-extension', '.js'])
-      await babel(
-        ['src', '--out-dir', 'dist', '--out-file-extension', '.mjs'],
-        { env: { BABEL_ENV: 'mjs' } }
-      )
+      await runBabel({
+        srcDir: 'src',
+        destDir: 'dist',
+        outFileExtension: '.js',
+      })
+      await runBabel({
+        srcDir: 'src',
+        destDir: 'dist',
+        outFileExtension: '.mjs',
+        envName: 'mjs',
+      })
       if (isFlow) await require('../util/copyFlowDefs')()
       if (isTypescript) await require('../util/copyTsDefs')()
       await require('../util/copyOtherFilesToDist')()
