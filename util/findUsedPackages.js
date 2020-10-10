@@ -13,7 +13,10 @@ async function findUsedPackages(files) {
   }
 
   for (const file of files) {
-    const ast = await babel.parseAsync(await fs.readFile(file, 'utf8'))
+    const ast = await babel.parseAsync(await fs.readFile(file, 'utf8'), {
+      cwd: process.cwd(),
+      configFile: require.resolve('../.babelrc.js'),
+    })
     traverse(ast, {
       CallExpression(path) {
         if (
