@@ -1086,9 +1086,9 @@
   integrity sha512-oKxnkMy90YYxfHfNTIfIUOP7pyhNMgmP8ZNFTIIvflzsFXyLkbHwoTU0ETevmK+XTM8n4HvY+9m2ekSI7sRZbQ==
 
 "@jedwards1211/eslint-config-flow@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@jedwards1211/eslint-config-flow/-/eslint-config-flow-2.0.0.tgz#b4eda415303b0c16a12f6b8ea44d431a0d665c33"
-  integrity sha512-LAoaPZlWWVQkcn/1dDyUetOqpENmtjcHlts8dUnJ9MY0KxiMrYFDeup2KDllIXNvYWVpBLr9GUXo1RCYIi6gaA==
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/@jedwards1211/eslint-config-flow/-/eslint-config-flow-2.0.1.tgz#78898323cefa48a66ed422fdbafcf3b20cebd250"
+  integrity sha512-z1cpL10v6i93Sgib/mK4RuwjuINDOSY70s3vIcBDEtutr6uP7opk5eqS5x8win+Y3I+1KNiksNmEJChqKuWWWg==
 
 "@jedwards1211/eslint-config@^2.0.0":
   version "2.0.0"
@@ -3330,19 +3330,9 @@ fromentries@^1.2.0:
   resolved "https://registry.yarnpkg.com/fromentries/-/fromentries-1.2.1.tgz#64c31665630479bc993cd800d53387920dc61b4d"
   integrity sha512-Xu2Qh8yqYuDhQGOhD5iJGninErSfI9A3FrriD3tjUgV5VbJFeH8vfgZ9HnC6jWN80QDVNQK5vmxRAmEAp7Mevw==
 
-fs-extra@^9.0.0:
+fs-extra@^9.0.0, fs-extra@^9.0.1:
   version "9.0.1"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-9.0.1.tgz#910da0062437ba4c39fedd863f1675ccfefcb9fc"
-  integrity sha512-h2iAoN838FqAFJY2/qVpzFXy+EBxfVE220PalAqQLDVsFOHLJrZvut5puAbCdNv6WJk+B8ihI+k0c7JK5erwqQ==
-  dependencies:
-    at-least-node "^1.0.0"
-    graceful-fs "^4.2.0"
-    jsonfile "^6.0.1"
-    universalify "^1.0.0"
-
-fs-extra@^9.0.1:
-  version "9.0.1"
-  resolved "https://registry.npmjs.org/fs-extra/-/fs-extra-9.0.1.tgz#910da0062437ba4c39fedd863f1675ccfefcb9fc"
   integrity sha512-h2iAoN838FqAFJY2/qVpzFXy+EBxfVE220PalAqQLDVsFOHLJrZvut5puAbCdNv6WJk+B8ihI+k0c7JK5erwqQ==
   dependencies:
     at-least-node "^1.0.0"
