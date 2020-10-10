@@ -17,6 +17,8 @@ const buildingSelf = process.cwd() === path.resolve(__dirname, '..')
 
 const bin = (command) =>
   path.resolve(__dirname, '..', 'node_modules', '.bin', command)
+const projBin = (command) => path.resolve('node_modules', '.bin', command)
+
 const root = (file) => path.resolve(__dirname, '..', file)
 
 const prettier = () =>
@@ -72,10 +74,10 @@ if (require.main === module) {
     clean: () => `${bin('rimraf')} dist`,
     check: () =>
       commands(
-        `${__filename} prettier`,
-        `${__filename} lint`,
-        isFlow && 'flow',
-        isTypescript && 'tsc --noEmit'
+        scripts.prettier(),
+        scripts.lint(),
+        isFlow && projBin('flow'),
+        isTypescript && `${projBin('tsc')} --noEmit`
       ),
     build: () =>
       commands(
@@ -95,13 +97,13 @@ if (require.main === module) {
       )} NODE_ENV=test BABEL_ENV=coverage ${nyc()} --reporter-lcov --reporter=text ${mocha()}`,
     'test:watch': () => `${bin('cross-env')} NODE_ENV=test ${mocha()} --watch`,
     prepublishOnly: () =>
-      commands(
-        `${__filename} check`,
-        `${__filename} test`,
-        `${__filename} build`
-      ),
+      commands(scripts.check(), scripts.test(), scripts.build()),
     'pre-commit': () =>
-      commands(lintStaged(), isFlow && 'flow', isTypescript && 'tsc --noEmit'),
+      commands(
+        lintStaged(),
+        isFlow && projBin('flow'),
+        isTypescript && `${projBin('tsc')} --noEmit`
+      ),
     commitlint,
     'open:coverage': () => `${bin('open-cli')} coverage/lcov-report/index.html`,
     'open:ci': () => `${bin('open-cli')} ${getCiUrl()}`,
