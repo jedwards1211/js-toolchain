@@ -144,6 +144,8 @@ module.exports = function (api) {
       },
     },
     scripts: {
+      tc: 'toolchain',
+      toolchain: 'toolchain',
       test: 'toolchain test',
       prepublishOnly:
         'echo This package is meant to be published by semantic-release from the dist build directory. && exit 1',
