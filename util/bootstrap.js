@@ -196,7 +196,7 @@ module.exports = function (api) {
   )
   if (depsToRemove.length) {
     console.log(`removing unnecessary devDependencies...`) // eslint-disable-line no-console
-    await spawn('yarn', ['remove', ...depsToRemove], { exit: false })
+    await spawn('yarn', ['remove', ...depsToRemove])
   }
 
   if (
@@ -207,16 +207,15 @@ module.exports = function (api) {
     )
   ) {
     console.log(`installing husky...`) // eslint-disable-line no-console
-    await spawn(
-      'yarn',
-      ['add', '--dev', `husky@${toolchainPackageJson.dependencies.husky}`],
-      { exit: false }
-    )
+    await spawn('yarn', [
+      'add',
+      '--dev',
+      `husky@${toolchainPackageJson.dependencies.husky}`,
+    ])
   }
 
   await spawn(require.resolve('../bin/toolchain.js'), ['format'], {
     shell: true,
-    exit: false,
   })
 }
 

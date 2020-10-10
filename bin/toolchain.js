@@ -3,7 +3,7 @@
 const chalk = require('chalk')
 const spawn = require('../util/spawn.js')
 const path = require('path')
-const fs = require('fs')
+const fs = require('fs-extra')
 
 const isFlow = fs.existsSync('.flowconfig')
 const isTypescript = fs.existsSync('tsconfig.json')
@@ -11,7 +11,7 @@ const hostPrettierignore = fs.existsSync('.prettierignore')
 const hostEslintignore = fs.existsSync('.eslintignore')
 const hostPackageJson = require('../util/hostPackageJson')
 const toolchainPackageJson = require('../package.json')
-const toolchainName = toolchainPackageJson.name
+const { name: toolchainName, version: toolchainVersion } = toolchainPackageJson
 
 const buildingSelf = process.cwd() === path.resolve(__dirname, '..')
 
@@ -21,35 +21,63 @@ const projBin = (command) => path.resolve('node_modules', '.bin', command)
 
 const root = (file) => path.resolve(__dirname, '..', file)
 
-const prettier = () =>
-  `${bin('prettier')} --config ${root('.prettierrc.js')} --ignore-path ${
-    hostPrettierignore ? '.prettierignore' : '.gitignore'
-  }`
+const spawnable = (command, baseArgs = [], baseOptions = {}) => (
+  args = [],
+  options = {}
+) =>
+  spawn(command, [...baseArgs, ...args], {
+    ...baseOptions,
+    ...options,
+    env: { ...process.env, ...baseOptions.env, ...options.env },
+  })
 
-const eslint = () =>
-  `${bin('eslint')} --config ${root('.eslintrc.js')} --ignore-path ${
-    hostEslintignore ? '.eslintignore' : '.gitignore'
-  } --ignore-pattern flow-typed/`
+const prettierArgs = [
+  '--config',
+  root('.prettierrc.js'),
+  '--ignore-path',
+  hostPrettierignore ? '.prettierignore' : '.gitignore',
+]
+exports.prettierShellCommand = `${bin('prettier')} ${prettierArgs.join(' ')}`
 
-const babel = () => `${bin('babel')} --config-file ${root('.babelrc.js')}`
+const prettier = spawnable(bin('prettier'), prettierArgs)
 
-const mocha = () =>
-  `${bin('mocha')} -r ${require.resolve(
-    '../util/configureTests'
-  )} ${require.resolve('../util/mochaWatchClearConsole')} ${
-    (hostPackageJson.config || {}).mocha || 'test/**/*.js'
-  }`
+const eslintArgs = [
+  '--config',
+  root('.eslintrc.js'),
+  '--ignore-path',
+  hostEslintignore ? '.eslintignore' : '.gitignore',
+  '--ignore-pattern',
+  'flow-typed/',
+]
+exports.eslintShellCommand = `${bin('eslint')} ${eslintArgs.join(' ')}`
 
-const nyc = () =>
-  `${bin('nyc')} --nycrc-path ${root(
-    buildingSelf ? '.nyc.config.js' : '.nyc.config-host.js'
-  )}`
+const eslint = spawnable(bin('eslint'), eslintArgs)
 
-const lintStaged = () =>
-  `${bin('lint-staged')} --config ${root('lint-staged.config.js')}`
+const babel = spawnable(bin('babel'), ['--config-file', root('.babelrc.js')])
 
-const commitlint = () =>
-  `${bin('commitlint')} --config ${root('commitlint.config.js')}`
+const mochaArgs = () => [
+  '-r',
+  require.resolve('../util/configureTests'),
+  require.resolve('../util/mochaWatchClearConsole'),
+  (hostPackageJson.config || {}).mocha || 'test/**/*.js',
+]
+
+const mocha = spawnable(bin('mocha'), mochaArgs())
+
+const nyc = spawnable(bin('nyc'), [
+  '--nycrc-path',
+  root(buildingSelf ? '.nyc.config.js' : '.nyc.config-host.js'),
+])
+
+const lintStaged = spawnable(bin('lint-staged'), [
+  '--config',
+  root('lint-staged.config.js'),
+])
+
+const commitlint = spawnable(bin('commitlint'), [
+  '--config',
+  root('commitlint.config.js'),
+])
 
 const getCiUrl = () => {
   const repoUrl = hostPackageJson.repository
@@ -60,84 +88,170 @@ const getCiUrl = () => {
   return `https://app.circleci.com/pipelines/github/${match[1]}/${match[2]}`
 }
 
-exports.prettier = prettier
-exports.eslint = eslint
+const flow = spawnable(projBin('flow'))
+const tsc = spawnable(projBin('tsc', ['--noEmit']))
 
-const commands = (...args) => args.filter(Boolean).join(' && ')
+const scripts = {
+  prettier: {
+    description: 'check format with prettier',
+    run: (args = []) => prettier(['-c', '.', ...args]),
+  },
+  format: {
+    description: 'format files with prettier',
+    run: (args = []) => prettier(['--write', '.', ...args]),
+  },
+  lint: {
+    description: 'check files with eslint',
+    run: (args = []) => eslint(['.', ...args]),
+  },
+  'lint:fix': {
+    description: 'check files with eslint and autofix errors',
+    run: (args = []) => eslint(['--fix', '.', ...args]),
+  },
+  clean: {
+    description: 'clean build output',
+    run: () => fs.remove('dist'),
+  },
+  check: {
+    description: 'check with prettier, eslint, and flow/tsc (if applicable)',
+    run: async () => {
+      await scripts.prettier.run()
+      await scripts.lint.run()
+      if (isFlow) await flow()
+      if (isTypescript) await tsc()
+    },
+  },
+  build: {
+    description: 'build everything to publish to dist directory',
+    run: async () => {
+      await scripts.clean.run()
+      await babel(['src', '--out-dir', 'dist', '--out-file-extension', '.js'])
+      await babel(
+        ['src', '--out-dir', 'dist', '--out-file-extension', '.mjs'],
+        { env: { BABEL_ENV: 'mjs' } }
+      )
+      if (isFlow) await require('../util/copyFlowDefs')()
+      if (isTypescript) await require('../util/copyTsDefs')()
+      await require('../util/copyOtherFilesToDist')()
+      await require('../util/buildDistPackageJson')('dist')
+    },
+  },
+  test: {
+    description: 'run tests with code coverage',
+    run: (args = []) =>
+      nyc(
+        [
+          '--reporter=lcov',
+          '--reporter=text',
+          bin('mocha'),
+          ...mochaArgs(),
+          ...args,
+        ],
+        { env: { NODE_ENV: 'test', BABEL_ENV: 'coverage' } }
+      ),
+  },
+  'test:watch': {
+    description: 'run tests in watch mode',
+    run: (args = []) =>
+      mocha(['--watch', ...args], {
+        env: { NODE_ENV: 'test' },
+      }),
+  },
+  prepublishOnly: {
+    description: 'run check, test, and build',
+    run: async () => {
+      await scripts.check.run()
+      await scripts.test.run()
+      await scripts.build.run()
+    },
+  },
+  'pre-commit': {
+    description: 'run pre-commit hook checks',
+    run: async () => {
+      await lintStaged()
+      if (isFlow) await flow()
+      if (isTypescript) await tsc()
+    },
+  },
+  commitlint: {
+    description: 'check commit message with commitlint',
+    run: commitlint,
+  },
+  'open:coverage': {
+    description: 'open code coverage output in browser',
+    run: () => spawn(bin('open-cli'), ['coverage/lcov-report/index.html']),
+  },
+  'open:ci': {
+    description: 'open CircleCI pipelines in browser',
+    run: () => spawn(bin('open-cli'), [getCiUrl()]),
+  },
+  codecov: {
+    description: 'upload coverage to codecov',
+    run: async () => {
+      const dump = nyc(['report', '--reporter=text-lcov'], { stdio: 'pipe' })
+      dump.stdout.pipe(fs.createWriteStream('coverage.lcov'))
+      await dump
+      await spawn(bin('codecov'))
+    },
+  },
+  release: {
+    description: 'release package with semantic-release',
+    run: (args = []) =>
+      spawn(bin('semantic-release'), args, { cwd: path.resolve('dist') }),
+  },
+  bootstrap: {
+    description: 'prepare your project',
+    run: () => require.resolve('../util/bootstrap')(),
+  },
+  upgrade: {
+    description: `upgrade ${toolchainName}`,
+    run: (args = []) => spawn('yarn', ['upgrade', toolchainName, ...args]),
+  },
+  version: {
+    description: `print version of ${toolchainName}`,
+    run: () => {
+      console.log(`${toolchainName}@${toolchainVersion}`) // eslint-disable-line no-console
+    },
+  },
+}
+module.exports.scripts = scripts
 
 if (require.main === module) {
-  const scripts = {
-    prettier: () => `${prettier()} -c .`,
-    format: () => `${prettier()} --write .`,
-    lint: () => `${eslint()} .`,
-    'lint:fix': () => `${eslint()} --fix .`,
-    clean: () => `${bin('rimraf')} dist`,
-    check: () =>
-      commands(
-        scripts.prettier(),
-        scripts.lint(),
-        isFlow && projBin('flow'),
-        isTypescript && `${projBin('tsc')} --noEmit`
-      ),
-    build: () =>
-      commands(
-        `${bin('rimraf')} dist`,
-        `${babel()} src --out-dir dist --out-file-extension .js`,
-        `${bin(
-          'cross-env'
-        )} BABEL_ENV=mjs ${babel()} src --out-dir dist --out-file-extension .mjs`,
-        isFlow && require.resolve('../util/copyFlowDefs'),
-        isTypescript && require.resolve('../util/copyTsDefs'),
-        require.resolve('../util/copyOtherFilesToDist'),
-        require.resolve('../util/buildDistPackageJson')
-      ),
-    test: () =>
-      `${bin(
-        'cross-env'
-      )} NODE_ENV=test BABEL_ENV=coverage ${nyc()} --reporter-lcov --reporter=text ${mocha()}`,
-    'test:watch': () => `${bin('cross-env')} NODE_ENV=test ${mocha()} --watch`,
-    prepublishOnly: () =>
-      commands(scripts.check(), scripts.test(), scripts.build()),
-    'pre-commit': () =>
-      commands(
-        lintStaged(),
-        isFlow && projBin('flow'),
-        isTypescript && `${projBin('tsc')} --noEmit`
-      ),
-    commitlint,
-    'open:coverage': () => `${bin('open-cli')} coverage/lcov-report/index.html`,
-    'open:ci': () => `${bin('open-cli')} ${getCiUrl()}`,
-    codecov: () =>
-      `${nyc()} report --reporter=text-lcov > coverage.lcov; ${bin('codecov')}`,
-    release: () => commands('cd dist', bin('semantic-release')),
-    bootstrap: () => require.resolve('../util/bootstrap'),
-    upgrade: () => `yarn upgrade ${toolchainName}`,
-  }
-
   if (!process.argv[2]) {
     /* eslint-disable no-console */
-    console.error('Usage: toolchain <command> <arguments...>')
-    console.error('Available Scripts:')
+    console.error('Usage: toolchain <command> <arguments...>\n')
+    console.error('Available commands:')
     for (const script of Object.keys(scripts).sort()) {
-      console.error(`  ${script}`)
+      console.error(
+        chalk`  {bold ${script.padEnd(20)}}${scripts[script].description}`
+      )
     }
     /* eslint-enable no-console */
     process.exit(1)
   }
-  if (process.argv[2] === 'version') {
-    console.log(`${toolchainName}@${toolchainPackageJson.version}`) // eslint-disable-line no-console
-    process.exit(0)
-  }
-  if (!scripts[process.argv[2]]) {
-    console.error('Unknown script:', process.argv[2]) // eslint-disable-line no-console
+  const script = scripts[process.argv[2]]
+  if (!script) {
+    console.error('Unknown command:', process.argv[2]) // eslint-disable-line no-console
     process.exit(1)
   }
-  const script = scripts[process.argv[2]]()
 
-  // eslint-disable-next-line no-console
-  console.error(
-    chalk`{gray.bold $ ${script} ${process.argv.slice(3).join(' ')}}`
+  if (script !== scripts.version) {
+    console.error(chalk`{bold ${toolchainName}@${toolchainVersion}}`) // eslint-disable-line no-console
+  }
+
+  Promise.resolve(script.run(process.argv.slice(3))).then(
+    () => {
+      process.exit(0)
+    },
+    (error) => {
+      const { code } = error
+      if (typeof code === 'number' && code !== 0) {
+        console.error(error.message) // eslint-disable-line no-console
+        process.exit(code)
+      } else {
+        console.error(error.stack) // eslint-disable-line no-console
+        process.exit(1)
+      }
+    }
   )
-
-  spawn(script, process.argv.slice(3), { shell: true })
 }

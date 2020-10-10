@@ -1,32 +1,45 @@
-const { spawn: _spawn } = require('child_process')
+const path = require('path')
+const chalk = require('chalk')
+const { spawn } = require('promisify-child-process')
 
-module.exports = function spawn(command, args, _options) {
-  if (arguments.length < 3) {
-    _options = args
+function formatArg(arg) {
+  if (/^[-_a-z0-9=./]+$/i.test(arg)) return arg
+  return `'${arg.replace(/'/g, "'\\''")}'`
+}
+
+module.exports = function (command, args, options) {
+  if (!Array.isArray(args)) {
+    options = args
     args = []
   }
-  if (!_options) _options = {}
-  const { exit, ...options } = _options
-  return new Promise((resolve, reject) => {
-    _spawn(command, args || [], { stdio: 'inherit', ...options })
-      .on('error', (e) => {
-        console.error(e) // eslint-disable-line no-console
-        if (exit === false) reject(e)
-        else process.exit(1)
-      })
-      .on('exit', (code, signal) => {
-        if (code !== 0) {
-          const message =
-            code != null
-              ? `exited with code ${code}`
-              : `was killed with signal ${signal}`
-          // eslint-disable-next-line no-console
-          console.error(command, message)
-          if (exit === false) reject(new Error(message))
-          else process.exit(code != null ? code : 1)
-        }
-        if (exit === false) resolve()
-        else process.exit(0)
-      })
-  })
+  if (!options) options = {}
+
+  // eslint-disable-next-line no-console
+  console.error(
+    chalk`{gray.bold $ ${command} ${args.map(formatArg).join(' ')}}`
+  )
+
+  return spawn(command, args || {}, { stdio: 'inherit', ...options }).then(
+    (result) => {
+      // eslint-disable-next-line no-console
+      console.error(
+        chalk`{green ✔} {bold ${path.basename(command)}} exited with code 0`
+      )
+      return result
+    },
+    (error) => {
+      const { code, signal } = error
+      if (code) {
+        error.message = chalk`{red ✖} {bold ${path.basename(
+          command
+        )}} exited with code ${code}`
+      }
+      if (signal) {
+        error.message = chalk`{red ✖} {bold ${path.basename(
+          command
+        )}} was killed with signal ${signal}`
+      }
+      throw error
+    }
+  )
 }
