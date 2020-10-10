@@ -75,7 +75,7 @@ if (require.main === module) {
         `${__filename} prettier`,
         `${__filename} lint`,
         isFlow && 'flow',
-        isTypescript && 'tsc'
+        isTypescript && 'tsc --noEmit'
       ),
     build: () =>
       commands(
@@ -101,7 +101,7 @@ if (require.main === module) {
         `${__filename} build`
       ),
     'pre-commit': () =>
-      commands(lintStaged(), isFlow && 'flow', isTypescript && 'typescript'),
+      commands(lintStaged(), isFlow && 'flow', isTypescript && 'tsc --noEmit'),
     commitlint,
     'open:coverage': () => `${bin('open-cli')} coverage/lcov-report/index.html`,
     'open:ci': () => `${bin('open-cli')} ${getCiUrl()}`,
