@@ -44,10 +44,13 @@ async function bootstrap({ hard }) {
       fs.remove('.eslintrc'),
       fs.remove('.eslintrc.js'),
       fs.remove('.prettierrc'),
-      fs.remove('.prettierrc.json'),
       fs.remove('.prettierrc.js'),
+      fs.remove('.prettierrc.json'),
       fs.remove('.npmignore'),
       fs.remove('.gitignore'),
+      fs.remove('commitlint.config.js'),
+      fs.remove('lint-staged.config.js'),
+      fs.remove('.nyc.config.js'),
     ])
   }
 
