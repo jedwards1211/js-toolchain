@@ -111,16 +111,20 @@ module.exports = function (api) {
   if (hard) {
     updatedPackageJson = without(
       updatedPackageJson,
+      'main',
+      'module',
+      'exports',
       'husky',
       'renovate',
       'prettier',
       'lint-staged',
       'commitlint',
-      'eslintConfig'
+      'eslintConfig',
+      'files'
     )
     if (updatedPackageJson.config) {
       updatedPackageJson = merge(updatedPackageJson, {
-        config: without(updatedPackageJson.config, 'mochak'),
+        config: without(updatedPackageJson.config, 'mocha'),
       })
     }
   }
