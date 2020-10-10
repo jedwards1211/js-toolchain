@@ -183,6 +183,9 @@ module.exports = function (api) {
   const usedPackages = await findUsedPackages(
     await glob('{src,test}/**.{js,cjs,mjs}')
   )
+  usedPackages.add(toolchainName)
+  usedPackages.add('flow-bin')
+  usedPackages.add('typescript')
 
   const depsToRemove = Object.keys(packageJson.devDependencies).filter(
     (dep) =>
