@@ -18,15 +18,11 @@ describe(`toolchain`, function () {
   this.timeout(60000)
   it(`works on test project`, async function () {
     await spawn('yarn', { cwd: project, stdio: 'inherit' })
-    await spawn(
-      process.execPath,
-      [require.resolve('../bin/toolchain.js'), 'prepublishOnly'],
-      {
-        cwd: project,
-        stdio: 'inherit',
-        env: { ...process.env, NODE_ENV: '', BABEL_ENV: '' },
-      }
-    )
+    await spawn('yarn', ['prepublishOnly'], {
+      cwd: project,
+      stdio: 'inherit',
+      env: { ...process.env, NODE_ENV: '', BABEL_ENV: '' },
+    })
 
     const expectedFiles = await promisify(glob)('**', { cwd: expectedDist })
     for (const file of expectedFiles) {
