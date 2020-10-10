@@ -13,7 +13,6 @@ const packageJsonPath = path.resolve(
 )
 
 async function addScripts() {
-  console.log(packageJsonPath)
   const packageJson = await fs.readJson(packageJsonPath)
   if (
     packageJson.scripts &&
@@ -24,7 +23,7 @@ async function addScripts() {
   if (!packageJson.scripts) packageJson.scripts = {}
   packageJson.scripts.toolchain = packageJson.scripts.tc = 'toolchain'
   await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 })
-  console.log('wrote', packageJsonPath)
+  console.log('added toolchain scripts to', packageJsonPath) // eslint-disable-line no-console
 }
 
 module.exports = addScripts
