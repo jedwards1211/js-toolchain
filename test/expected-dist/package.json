@@ -16,7 +16,8 @@
   },
   "homepage": "https://github.com/jcoreio/mutate#readme",
   "dependencies": {
-    "iterall": "^1.3.0"
+    "iterall": "^1.3.0",
+    "@babel/runtime": "^7.11.2"
   },
   "exports": {
     "./package.json": "./package.json",
