@@ -8,6 +8,7 @@ module.exports = {
   ],
   parser: require.resolve('babel-eslint'),
   env: {
+    'shared-node-browser': true,
     es2020: true,
   },
 }
