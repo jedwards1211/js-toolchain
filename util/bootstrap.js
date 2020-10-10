@@ -41,7 +41,7 @@ function without(src, ...keys) {
   return src
 }
 
-async function bootstrap({ hard }) {
+async function bootstrap({ hard } = {}) {
   if (hard) {
     await Promise.all([
       fs.remove('.babelrc'),
@@ -218,6 +218,8 @@ module.exports = function (api) {
     shell: true,
   })
 }
+
+module.exports = bootstrap
 
 if (require.main === module)
   bootstrap({ hard: process.argv.indexOf('--hard') >= 0 })

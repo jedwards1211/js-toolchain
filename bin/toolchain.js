@@ -206,7 +206,8 @@ const scripts = {
   },
   bootstrap: {
     description: 'prepare your project',
-    run: () => require.resolve('../util/bootstrap')(),
+    run: (args = []) =>
+      require('../util/bootstrap')({ hard: args.indexOf('--hard') >= 0 }),
   },
   upgrade: {
     description: `upgrade ${toolchainName}`,
