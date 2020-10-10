@@ -122,6 +122,10 @@ if (require.main === module) {
     /* eslint-enable no-console */
     process.exit(1)
   }
+  if (process.argv[2] === 'version') {
+    console.log(`${toolchainName}@${toolchainPackageJson.version}`) // eslint-disable-line no-console
+    process.exit(0)
+  }
   if (!scripts[process.argv[2]]) {
     console.error('Unknown script:', process.argv[2]) // eslint-disable-line no-console
     process.exit(1)
