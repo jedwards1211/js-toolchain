@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 const { spawn: _spawn } = require('child_process')
 
 module.exports = function spawn(command, args, _options) {
