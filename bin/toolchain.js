@@ -10,6 +10,8 @@ const isTypescript = fs.existsSync('tsconfig.json')
 const hostPrettierignore = fs.existsSync('.prettierignore')
 const hostEslintignore = fs.existsSync('.eslintignore')
 const hostPackageJson = require('../util/hostPackageJson')
+const toolchainPackageJson = require('../package.json')
+const toolchainName = toolchainPackageJson.name
 
 const buildingSelf = process.cwd() === path.resolve(__dirname, '..')
 
@@ -107,6 +109,7 @@ if (require.main === module) {
       `${nyc()} report --reporter=text-lcov > coverage.lcov; ${bin('codecov')}`,
     release: () => commands('cd dist', bin('semantic-release')),
     bootstrap: () => require.resolve('../util/bootstrap'),
+    upgrade: () => `yarn upgrade ${toolchainName}`,
   }
 
   if (!process.argv[2]) {
