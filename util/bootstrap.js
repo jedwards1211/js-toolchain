@@ -36,15 +36,15 @@ async function replace(file, content) {
 async function bootstrap() {
   await replace(
     '.eslintrc.js',
-    `module.exports = require('@jedwards1211/js-toolchain/.eslintrc.js')`
+    `/* eslint-env node */\nmodule.exports = require('@jedwards1211/js-toolchain/.eslintrc.js')`
   )
   await replace(
     '.prettierrc.js',
-    `module.exports = require('@jedwards1211/js-toolchain/.prettierrc.js')`
+    `/* eslint-env node */\nmodule.exports = require('@jedwards1211/js-toolchain/.prettierrc.js')`
   )
   await replace(
     '.babelrc.js',
-    `module.exports = require('@jedwards1211/js-toolchain/.babelrc.js')`
+    `/* eslint-env node */\nmodule.exports = require('@jedwards1211/js-toolchain/.babelrc.js')`
   )
 
   await fs.mkdirs('.circleci')
