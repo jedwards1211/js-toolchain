@@ -216,8 +216,8 @@ const scripts = {
 }
 module.exports.scripts = scripts
 
-if (require.main === module) {
-  if (!process.argv[2]) {
+async function toolchain(command, args) {
+  if (!command) {
     /* eslint-disable no-console */
     console.error('Usage: toolchain <command> <arguments...>\n')
     console.error('Available commands:')
@@ -229,9 +229,9 @@ if (require.main === module) {
     /* eslint-enable no-console */
     process.exit(1)
   }
-  const script = scripts[process.argv[2]]
+  const script = scripts[command]
   if (!script) {
-    console.error('Unknown command:', process.argv[2]) // eslint-disable-line no-console
+    console.error('Unknown command:', command) // eslint-disable-line no-console
     process.exit(1)
   }
 
@@ -239,17 +239,30 @@ if (require.main === module) {
     console.error(chalk`{bold ${toolchainName}@${toolchainVersion}}`) // eslint-disable-line no-console
   }
 
-  Promise.resolve(script.run(process.argv.slice(3))).then(
+  try {
+    await script.run(args)
+  } catch (error) {
+    const { code } = error
+    if (typeof code === 'number' && code !== 0) {
+      console.error(error.message) // eslint-disable-line no-console
+    } else {
+      console.error(error.stack) // eslint-disable-line no-console
+    }
+    throw error
+  }
+}
+exports.toolchain = toolchain
+
+if (require.main === module) {
+  toolchain(process.argv[2], process.argv.slice(3)).then(
     () => {
       process.exit(0)
     },
     (error) => {
       const { code } = error
       if (typeof code === 'number' && code !== 0) {
-        console.error(error.message) // eslint-disable-line no-console
         process.exit(code)
       } else {
-        console.error(error.stack) // eslint-disable-line no-console
         process.exit(1)
       }
     }
