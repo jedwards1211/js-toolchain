@@ -93,9 +93,8 @@
     "open-cli": "^6.0.1",
     "prettier": "^2.1.2",
     "rimraf": "^3.0.2",
-    "semantic-release": "^17.1.2"
+    "semantic-release": "^17.1.2",
+    "semver": "^7.3.2"
   },
-  "devDependencies": {
-    "promisify-child-process": "^4.1.1"
-  }
+  "devDependencies": {}
 }

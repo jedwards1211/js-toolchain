@@ -37,6 +37,7 @@ The toolchain will do the following:
 
 - Transpile `src/**.js` to `dist/**.js` (CommonJS modules)
 - Transpile `src/**.js` to `dist/**.mjs` (ES modules)
+- Copy `src/**.js` to `dist/**.js.flow`
 - Copy `src/**.js.flow` to `dist`
 - Copy `src/**.d.ts` to `dist`
 - Copy `*.md` to `dist`
@@ -46,10 +47,11 @@ The toolchain will do the following:
   - `exports` from root `package.json` or auto-generated value
   - `@babel/runtime` will be added or removed from `dependencies` depending on whether any output code requires it
   - Removed keys:
+    - `config`
     - `devDependencies`
-    - `husky`
     - `files`
+    - `husky`
     - `lint-staged`
     - `nyc`
-    - `config`
     - `scripts.prepublishOnly`
+    - `renovate`

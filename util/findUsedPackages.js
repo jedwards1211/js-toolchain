@@ -1,28 +1,19 @@
-const fs = require('fs-extra')
-const { promisify } = require('util')
-const path = require('path')
-const glob = require('glob')
+#!/usr/bin/env node
 
+const fs = require('fs-extra')
 const babel = require('@babel/core')
 const traverse = require('@babel/traverse').default
 
-module.exports = async function needBabelRuntime(dist) {
-  let babelRuntimeFound = false
-
+async function findUsedPackages(files) {
+  const packages = new Set()
   function processSource(source) {
     if (!source.node || source.node.type !== 'StringLiteral') return
-    if (source.node.value.startsWith('@babel/runtime')) {
-      babelRuntimeFound = true
-      source.stop()
-    }
+    const match = /^(@[^./]+\/)?([^./]+)/i.exec(source.node.value)
+    if (match) packages.add(match[0])
   }
 
-  for (const file of await promisify(glob)(
-    path.join(dist, '**.{js,cjs,mjs}')
-  )) {
-    const ast = await babel.parseAsync(await fs.readFile(file, 'utf8'), {
-      cwd: dist,
-    })
+  for (const file of files) {
+    const ast = await babel.parseAsync(await fs.readFile(file, 'utf8'))
     traverse(ast, {
       CallExpression(path) {
         if (
@@ -37,7 +28,14 @@ module.exports = async function needBabelRuntime(dist) {
         processSource(path.get('source'))
       },
     })
-    if (babelRuntimeFound) return true
   }
-  return false
+  return packages
+}
+
+module.exports = findUsedPackages
+
+if (require.main === module) {
+  findUsedPackages(require('glob').sync(process.argv[2])).then(
+    (packages) => console.log([...packages].sort()) // eslint-disable-line no-console
+  )
 }

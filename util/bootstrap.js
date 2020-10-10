@@ -3,9 +3,14 @@
 const spawn = require('./spawn')
 const path = require('path')
 const fs = require('fs-extra')
+const _glob = require('glob')
+const { promisify } = require('util')
+const semver = require('semver')
+const findUsedPackages = require('./findUsedPackages')
 const toolchainPackageJson = require('../package.json')
 const toolchainName = toolchainPackageJson.name
 const toolchainDeps = new Set(Object.keys(toolchainPackageJson.dependencies))
+const glob = promisify(_glob)
 
 const content = path.resolve(__dirname, '..', 'content')
 const circleciConfigYml = path.join('.circleci', 'config.yml')
@@ -120,7 +125,8 @@ module.exports = function (api) {
       'lint-staged',
       'commitlint',
       'eslintConfig',
-      'files'
+      'files',
+      'renovate'
     )
     if (updatedPackageJson.config) {
       updatedPackageJson = merge(updatedPackageJson, {
@@ -150,6 +156,7 @@ module.exports = function (api) {
     await fs.writeJson('package.json', updatedPackageJson, { spaces: 2 })
     console.log('wrote package.json') // eslint-disable-line no-console
   }
+  if (!packageJson.devDependencies) packageJson.devDependencies = {}
 
   const gitignore = (
     await fs.readFile('.gitignore', 'utf8').catch((err) => {
@@ -170,18 +177,29 @@ module.exports = function (api) {
     console.log('wrote .gitignore') // eslint-disable-line no-console
   }
 
+  const usedPackages = await findUsedPackages(
+    await glob('{src,test}/**.{js,cjs,mjs}')
+  )
+
   const depsToRemove = Object.keys(packageJson.devDependencies).filter(
     (dep) =>
-      (toolchainDeps.has(dep) ||
+      (!usedPackages.has(dep) ||
+        toolchainDeps.has(dep) ||
         toolchainDeps.has(dep.replace(/^babel-/, '@babel/'))) &&
       dep !== 'husky'
   )
   if (depsToRemove.length) {
-    console.log(`removing deps that are satisfied by ${toolchainName}...`) // eslint-disable-line no-console
+    console.log(`removing unnecessary devDependencies...`) // eslint-disable-line no-console
     await spawn('yarn', ['remove', ...depsToRemove], { exit: false })
   }
 
-  if (!packageJson.devDependencies.husky) {
+  if (
+    !packageJson.devDependencies.husky ||
+    !semver.satisfies(
+      packageJson.devDependencies.husky.replace(/^\^/, ''),
+      toolchainPackageJson.dependencies.husky
+    )
+  ) {
     console.log(`installing husky...`) // eslint-disable-line no-console
     await spawn(
       'yarn',

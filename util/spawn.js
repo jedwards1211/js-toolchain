@@ -2,7 +2,13 @@
 
 const { spawn: _spawn } = require('child_process')
 
-module.exports = function spawn(command, args, { exit, ...options } = {}) {
+module.exports = function spawn(command, args, _options) {
+  if (arguments.length < 3) {
+    _options = args
+    args = []
+  }
+  if (!_options) _options = {}
+  const { exit, ...options } = _options
   return new Promise((resolve, reject) => {
     _spawn(command, args || [], { stdio: 'inherit', ...options })
       .on('error', (e) => {

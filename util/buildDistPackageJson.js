@@ -21,6 +21,7 @@ async function buildDistPackageJson(dist) {
   delete packageJson['lint-staged']
   delete packageJson['nyc']
   delete packageJson['config']
+  delete packageJson['renovate']
   if (packageJson.scripts) {
     delete packageJson.scripts.prepublishOnly
   }
