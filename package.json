@@ -23,7 +23,7 @@
   "scripts": {
     "prepublishOnly": "bin/toolchain.js check && bin/toolchain.js test",
     "semantic-release": "semantic-release",
-    "_install": "node node_modules/husky/husky.js install"
+    "install": "node node_modules/husky/husky.js install"
   },
   "husky": {
     "hooks": {
