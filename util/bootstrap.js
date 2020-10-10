@@ -75,6 +75,7 @@ async function bootstrap() {
       test: 'toolchain test',
       prepublishOnly:
         'echo This package is meant to be published by semantic-release from the dist build directory. && exit 1',
+      'install-husky': 'node node_modules/husky/husky.js install',
     },
     config: {
       commitizen: { path: 'cz-coventional-changelog' },

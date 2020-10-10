@@ -30,9 +30,11 @@ const eslint = () =>
 const babel = () => `${bin('babel')} --config-file ${root('.babelrc.js')}`
 
 const mocha = () =>
-  `${bin('mocha')} -r ${require.resolve('../test/configure')} ${require.resolve(
-    '../test/clearConsole'
-  )} ${(hostPackageJson.config || {}).mocha || 'test/**/*.js'}`
+  `${bin('mocha')} -r ${require.resolve(
+    '../util/configureTests'
+  )} ${require.resolve('../util/mochaWatchClearConsole')} ${
+    (hostPackageJson.config || {}).mocha || 'test/**/*.js'
+  }`
 
 const nyc = () =>
   `${bin('nyc')} --nycrc-path ${root(
@@ -96,11 +98,9 @@ if (require.main === module) {
     bootstrap: () =>
       commands(
         require.resolve('../util/bootstrap'),
-        `${__filename} install-husky`,
+        `npm run install-husky`,
         `${__filename} format`
       ),
-    'install-husky': () =>
-      `${process.execPath} node_modules/husky/husky.js install`,
   }
 
   if (!process.argv[2]) {
