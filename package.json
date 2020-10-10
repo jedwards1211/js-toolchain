@@ -10,6 +10,7 @@
     "content",
     "util",
     ".babelrc.js",
+    ".eslintrc.js",
     ".nyc.config-host.js",
     ".nyc.config.js",
     ".prettierrc.js",
