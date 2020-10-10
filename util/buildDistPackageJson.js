@@ -19,7 +19,10 @@ async function buildDistPackageJson() {
   delete packageJson['lint-staged']
   delete packageJson['nyc']
   delete packageJson['config']
-  if (packageJson.scripts) delete packageJson.scripts.prepublishOnly
+  if (packageJson.scripts) {
+    delete packageJson.scripts.prepublishOnly
+    delete packageJson.scripts['install-husky']
+  }
   delete packageJson[toolchainName]
   await fs.writeJson(path.join('dist', 'package.json'), packageJson, {
     spaces: 2,
