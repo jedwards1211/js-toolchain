@@ -131,9 +131,11 @@ module.exports = function (api) {
   updatedPackageJson = merge(updatedPackageJson, {
     version: '0.0.0-development',
     sideEffects: false,
-    hooks: {
-      'pre-commit': 'toolchain pre-commit',
-      'commit-msg': 'toolchain commitlint -E HUSKY_GIT_PARAMS',
+    husky: {
+      hooks: {
+        'pre-commit': 'toolchain pre-commit',
+        'commit-msg': 'toolchain commitlint -E HUSKY_GIT_PARAMS',
+      },
     },
     scripts: {
       test: 'toolchain test',
