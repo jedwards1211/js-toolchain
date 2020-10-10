@@ -16,17 +16,13 @@ module.exports = function spawn(command, args, { exit, ...options } = {}) {
             code != null
               ? `exited with code ${code}`
               : `was killed with signal ${signal}`
-          if (exit === false) {
-            reject(new Error(message))
-            return
-          }
           // eslint-disable-next-line no-console
           console.error(command, message)
-        } else if (exit === false) {
-          resolve()
-        } else {
-          process.exit(code != null ? code : 1)
+          if (exit === false) reject(new Error(message))
+          else process.exit(code != null ? code : 1)
         }
+        if (exit === false) resolve()
+        else process.exit(0)
       })
   })
 }
