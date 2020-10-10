@@ -46,6 +46,7 @@
   "homepage": "https://github.com/jedwards1211/js-toolchain#readme",
   "husky": {
     "hooks": {
+      "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true",
       "pre-commit": "./bin/toolchain.js pre-commit",
       "commit-msg": "./bin/toolchain.js commitlint -E HUSKY_GIT_PARAMS"
     }
@@ -56,7 +57,7 @@
   "config": {
     "mocha": "test/index.js",
     "commitizen": {
-      "path": "cz-coventional-changelog"
+      "path": "cz-conventional-changelog"
     }
   },
   "dependencies": {
@@ -80,7 +81,9 @@
     "chai": "^4.2.0",
     "chalk": "^4.1.0",
     "codecov": "^3.8.0",
+    "commitizen": "^4.2.1",
     "cross-env": "^7.0.2",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^7.10.0",
     "eslint-config-prettier": "^6.12.0",
     "eslint-plugin-flowtype": "^5.2.0",

@@ -139,6 +139,7 @@ module.exports = function (api) {
     sideEffects: false,
     husky: {
       hooks: {
+        'prepare-commit-msg': 'exec < /dev/tty && git cz --hook || true',
         'pre-commit': 'toolchain pre-commit',
         'commit-msg': 'toolchain commitlint -E HUSKY_GIT_PARAMS',
       },
@@ -151,7 +152,7 @@ module.exports = function (api) {
         'echo This package is meant to be published by semantic-release from the dist build directory. && exit 1',
     },
     config: {
-      commitizen: { path: 'cz-coventional-changelog' },
+      commitizen: { path: 'cz-conventional-changelog' },
     },
   })
   if (updatedPackageJson !== packageJson) {
