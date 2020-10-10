@@ -56,17 +56,17 @@ const eslint = spawnable(bin('eslint'), eslintArgs)
 
 const mochaArgs = () => [
   '-r',
-  require.resolve('../util/configureTests'),
+  require.resolve('@babel/register'),
   require.resolve('../util/mochaWatchClearConsole'),
-  (hostPackageJson.config || {}).mocha || 'test/**/*.js',
+  (hostPackageJson.config || {}).mocha || `'test/**/*.js'`,
 ]
 
-const mocha = spawnable(bin('mocha'), mochaArgs())
-
-const nyc = spawnable(bin('nyc'), [
+const nycArgs = () => [
   '--nycrc-path',
   root(buildingSelf ? '.nyc.config.js' : '.nyc.config-host.js'),
-])
+]
+
+const nyc = spawnable(bin('nyc'), nycArgs())
 
 const lintStaged = spawnable(bin('lint-staged'), [
   '--config',
@@ -144,22 +144,27 @@ const scripts = {
   test: {
     description: 'run tests with code coverage',
     run: (args = []) =>
-      nyc(
-        [
+      spawn(
+        `${bin('nyc')} ${[
+          ...nycArgs(),
           '--reporter=lcov',
           '--reporter=text',
           bin('mocha'),
           ...mochaArgs(),
           ...args,
-        ],
-        { env: { NODE_ENV: 'test', BABEL_ENV: 'coverage' } }
+        ].join(' ')}`,
+        {
+          shell: true,
+          env: { ...process.env, NODE_ENV: 'test', BABEL_ENV: 'coverage' },
+        }
       ),
   },
   'test:watch': {
     description: 'run tests in watch mode',
     run: (args = []) =>
-      mocha(['--watch', ...args], {
-        env: { NODE_ENV: 'test' },
+      spawn(`${bin('mocha')} ${[...mochaArgs(), ...args].join(' ')}`, {
+        shell: true,
+        env: { ...process.env, NODE_ENV: 'test' },
       }),
   },
   prepublishOnly: {
