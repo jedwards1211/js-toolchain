@@ -3,10 +3,10 @@
 const path = require('path')
 const glob = require('glob')
 
-function buildConditionalExports() {
+function buildConditionalExports(dist) {
   const _exports = { './package.json': './package.json' }
 
-  for (let file of glob.sync('**.{js,cjs,mjs}', { cwd: 'dist' })) {
+  for (let file of glob.sync('**.{js,cjs,mjs}', { cwd: dist })) {
     file = './' + file
     const ext = path.extname(file)
     let exported = file.replace(/\.[^./\\]+$/, '')
@@ -23,5 +23,5 @@ function buildConditionalExports() {
 module.exports = buildConditionalExports
 
 if (require.main === module) {
-  buildConditionalExports()
+  buildConditionalExports('dist')
 }

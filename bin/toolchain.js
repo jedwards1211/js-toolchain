@@ -95,12 +95,7 @@ if (require.main === module) {
     codecov: () =>
       `${nyc()} report --reporter=text-lcov > coverage.lcov; ${bin('codecov')}`,
     release: () => commands('cd dist', bin('semantic-release')),
-    bootstrap: () =>
-      commands(
-        require.resolve('../util/bootstrap'),
-        `npm run install-husky`,
-        `${__filename} format`
-      ),
+    bootstrap: () => require.resolve('../util/bootstrap'),
   }
 
   if (!process.argv[2]) {

@@ -3,11 +3,13 @@
 const path = require('path')
 const fs = require('fs-extra')
 const buildConditionalExports = require('./buildConditionalExports')
-const toolchainName = require('../package.json').name
+const needBabelRuntime = require('./needBabelRuntime')
+const toolchainPackageJson = require('../package.json')
+const toolchainName = toolchainPackageJson.name
 
-async function buildDistPackageJson() {
+async function buildDistPackageJson(dist) {
   const packageJson = await fs.readJson('package.json')
-  const exports = buildConditionalExports()
+  const exports = buildConditionalExports(dist)
   const main = exports['.'] ? exports['.'].require : null
   const module = exports['.'] ? exports['.'].import : null
   if (!packageJson.exports) packageJson.exports = exports
@@ -21,10 +23,17 @@ async function buildDistPackageJson() {
   delete packageJson['config']
   if (packageJson.scripts) {
     delete packageJson.scripts.prepublishOnly
-    delete packageJson.scripts['install-husky']
   }
   delete packageJson[toolchainName]
-  await fs.writeJson(path.join('dist', 'package.json'), packageJson, {
+  if (await needBabelRuntime(dist)) {
+    const dependencies =
+      packageJson.dependencies || (packageJson.dependencies = {})
+    dependencies['@babel/runtime'] =
+      toolchainPackageJson.dependencies['@babel/runtime']
+  } else if (packageJson.dependencies) {
+    delete packageJson.dependecies['@babel/runtime']
+  }
+  await fs.writeJson(path.join(dist, 'package.json'), packageJson, {
     spaces: 2,
   })
 }
@@ -32,5 +41,5 @@ async function buildDistPackageJson() {
 module.exports = buildDistPackageJson
 
 if (require.main === module) {
-  buildDistPackageJson()
+  buildDistPackageJson('dist')
 }

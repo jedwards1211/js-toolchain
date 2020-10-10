@@ -18,11 +18,13 @@ This is my personal skeleton for creating an npm package with JS(/flow) source c
 
 ```sh
 yarn add --dev @jedwards1211/js-toolchain
-toolchain bootstrap
+yarn toolchain bootstrap
 ```
+
+If you want to more aggressively delete existing configuration, use `yarn toolchain bootstrap --hard`.
 
 The bootstrap script will modify your package.json, .gitignore, .circleci/config.yml and generate .babelrc.js, .eslintrc.js, and .prettierrc.js that are
 just proxies for the config in `@jedwards1211/js-toolchain`.
 
-Instead of running scripts from your `package.json`, you can run them with the `toolchain` command, for example `toolchain lint`. Run `toolchain` by itself
+Instead of running scripts from your `package.json`, you can run them with the `yarn toolchain` command (or `yarn tc`), for example `yarn toolchain lint`. Run `yarn toolchain` by itself
 to see all of the available commands.
