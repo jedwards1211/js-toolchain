@@ -20,8 +20,5 @@ jobs:
           command: yarn install --frozen-lockfile
 
       - run:
-          name: build
-          command: yarn prepublishOnly
-      - run:
           name: release
           command: yarn semantic-release || true
