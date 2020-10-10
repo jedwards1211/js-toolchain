@@ -21,6 +21,8 @@
     "toolchain": "./bin/toolchain.js"
   },
   "scripts": {
+    "tc": "bin/toolchain.js",
+    "toolchain": "bin/toolchain.js",
     "prepublishOnly": "bin/toolchain.js check && bin/toolchain.js test",
     "semantic-release": "semantic-release",
     "postinstall": "node util/addScripts.js"
