@@ -52,7 +52,7 @@
       "path": "cz-conventional-changelog"
     }
   },
-  "@jedwards1211/js-toolchain": {
+  "@jedwards1211/base-toolchain": {
     "mochaArgs": [
       "test/*.js"
     ]

@@ -3,6 +3,7 @@ const path = require('path')
 const glob = require('glob')
 const { promisify } = require('util')
 const babel = require('@babel/core')
+const { dependencies } = require('../package.json')
 
 async function runBabel({
   srcDir,
@@ -11,9 +12,14 @@ async function runBabel({
   ...babelOptions
 }) {
   await fs.mkdirs(destDir)
-  for (const file of await promisify(glob)(path.join('**.{js,cjs}'), {
-    cwd: srcDir,
-  })) {
+  for (const file of await promisify(glob)(
+    path.join(
+      dependencies['@babel/preset-typescript'] ? '**.{ts,tsx}' : '**.{js,cjs}'
+    ),
+    {
+      cwd: srcDir,
+    }
+  )) {
     const srcFile = path.join(srcDir, file)
     const destFile = path.join(
       destDir,

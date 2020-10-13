@@ -11,7 +11,11 @@ const hostPackageConfig = require('./hostPackageConfig')
 const hostPackageJson = require('./hostPackageJson')
 const toolchainPackageJson = require('../package.json')
 const runBabel = require('./runBabel')
-const { name: toolchainName, version: toolchainVersion } = toolchainPackageJson
+const {
+  name: toolchainName,
+  version: toolchainVersion,
+  dependencies,
+} = toolchainPackageJson
 
 const buildingSelf = process.cwd() === path.resolve(__dirname, '..')
 
@@ -57,11 +61,15 @@ const eslint = spawnable(bin('eslint'), eslintArgs)
 
 const mochaArgs = () => [
   '-r',
-  require.resolve('@babel/register'),
+  require.resolve('./configureTests'),
   require.resolve('./mochaWatchClearConsole'),
   ...(Array.isArray(hostPackageConfig.mochaArgs)
     ? hostPackageConfig.mochaArgs
-    : ['test/**/*.js']),
+    : [
+        dependencies['@babel/preset-typescript']
+          ? 'test/**.{ts,tsx}'
+          : 'test/**.js',
+      ]),
 ]
 
 const mocha = spawnable(bin('mocha'), mochaArgs)
