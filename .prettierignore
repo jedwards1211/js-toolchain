@@ -1,5 +1,3 @@
-test/expected-dist/
+fixtures/
 node_modules
-.nyc_output
-coverage
-dist
+packages/

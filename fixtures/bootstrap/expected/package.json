@@ -1,0 +1,66 @@
+{
+  "name": "@jcoreio/poll",
+  "version": "0.0.0-development",
+  "description": "handy promised-based polling API",
+  "scripts": {
+    "lint": "eslint src test",
+    "lint:fix": "eslint --fix src test",
+    "lint:watch": "esw --watch src test",
+    "flow": "flow",
+    "flow:coverage": "for file in src/**.js test/**.js; do echo $file; flow coverage $file; done",
+    "flow:watch": "flow-watch -e js,js.flow,flowconfig --ignore lib/ --ignore node_modules/ --watch .flowconfig --watch src/ --watch test/",
+    "build": "rimraf 'lib/*.js' 'lib/*.js.flow' && babel src --out-dir lib && flow-copy-source -v src/ lib",
+    "test": "toolchain test",
+    "test:watch": "mocha --watch $npm_package_config_mocha",
+    "codecov": "nyc report --reporter=text-lcov > coverage.lcov; codecov",
+    "commitmsg": "commitlint -e $GIT_PARAMS",
+    "precommit": "npm run lint && flow",
+    "prepush": "npm test",
+    "prepublishOnly": "echo This package is meant to be published by semantic-release from the dist build directory. && exit 1",
+    "open:coverage": "open coverage/lcov-report/index.html",
+    "semantic-release": "semantic-release",
+    "tc": "toolchain",
+    "toolchain": "toolchain"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jcoreio/poll.git"
+  },
+  "keywords": [
+    "es2015"
+  ],
+  "author": "Andy Edwards",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jcoreio/poll/issues"
+  },
+  "homepage": "https://github.com/jcoreio/poll#readme",
+  "devDependencies": {
+    "@jedwards1211/js-toolchain": "file:.yalc/@jedwards1211/js-toolchain",
+    "condition-circle": "^2.0.1",
+    "copy": "^0.3.0",
+    "flow-bin": "^0.63.1",
+    "husky": "^4.3.0",
+    "rimraf": "^2.6.0",
+    "typescript": "^3.9.7"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "release": {
+    "verifyConditions": "condition-circle"
+  },
+  "sideEffects": false,
+  "husky": {
+    "hooks": {
+      "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true",
+      "pre-commit": "toolchain pre-commit",
+      "commit-msg": "toolchain commitlint -E HUSKY_GIT_PARAMS"
+    }
+  }
+}
