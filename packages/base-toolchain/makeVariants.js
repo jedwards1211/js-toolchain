@@ -6,6 +6,9 @@ const fs = require('fs-extra')
 const path = require('path')
 const packageJson = require('./package.json')
 
+// flow-bin and typescript are shared by all toolchains in case def files are added
+// and need to be checked
+
 const variants = {
   'js-toolchain': {
     dependencies: new Set([
@@ -23,7 +26,6 @@ const variants = {
       '@types/mocha',
       '@types/node',
       '@typescript-eslint/eslint-plugin',
-      'typescript',
     ]),
   },
 }

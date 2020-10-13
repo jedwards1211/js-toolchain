@@ -3,6 +3,8 @@ const path = require('path')
 const glob = require('glob')
 const { promisify } = require('util')
 
+const displayPath = (file) => path.relative(process.cwd(), file)
+
 async function copy({ srcDir, pattern, destDir, getDest, dot, nodir }) {
   const files = await promisify(glob)(pattern, {
     cwd: srcDir,
@@ -22,7 +24,7 @@ async function copy({ srcDir, pattern, destDir, getDest, dot, nodir }) {
       }
     }
     await fs.copyFile(src, dest)
-    console.log(`${src} -> ${dest}`) // eslint-disable-line no-console
+    console.log(`${displayPath(src)} -> ${displayPath(dest)}`) // eslint-disable-line no-console
   }
 }
 module.exports = copy
