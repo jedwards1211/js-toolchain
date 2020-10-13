@@ -9,10 +9,11 @@ async function addScripts() {
   if (packageJsonPath === require.resolve('../package.json')) return
 
   const packageJson = await fs.readJson(packageJsonPath)
+
   if (
     packageJson.scripts &&
-    packageJson.scripts.toolchain === 'toolchain' &&
-    packageJson.scripts.tc === 'toolchain'
+    packageJson.scripts.toolchain &&
+    packageJson.scripts.tc
   )
     return
   if (!packageJson.scripts) packageJson.scripts = {}
