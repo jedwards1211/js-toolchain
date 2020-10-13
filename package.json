@@ -6,8 +6,17 @@
   "private": true,
   "scripts": {
     "check": "prettier -c . && (cd packages/js-toolchain && ./lib/toolchain.js check) && (cd fixtures/mutate/project && yarn tc check)",
-    "test": "(cd packages/js-toolchain && ./lib/toolchain.js test)"
+    "test": "(cd packages/js-toolchain && ./lib/toolchain.js test)",
+    "tc": "./packages/js-toolchain/lib/toolchain.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jedwards1211/js-toolchain.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jedwards1211/js-toolchain/issues"
+  },
+  "homepage": "https://github.com/jedwards1211/js-toolchain#readme",
   "devDependencies": {
     "@semantic-release/exec": "^5.0.0",
     "commitizen": "^4.2.1",

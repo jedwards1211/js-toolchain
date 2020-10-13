@@ -19,8 +19,8 @@
     "toolchain": "./lib/toolchain.js"
   },
   "scripts": {
-    "tc": "toolchain",
-    "toolchain": "toolchain",
+    "tc": "./lib/toolchain.js",
+    "toolchain": "./lib/toolchain.js",
     "semantic-release": "semantic-release",
     "postinstall": "node lib/addScripts.js"
   },
