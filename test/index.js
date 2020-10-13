@@ -1,8 +1,8 @@
 /* eslint-env node */
 
 const { describe, it, before } = require('mocha')
-const spawn = require('../lib/spawn')
-const copy = require('../lib/copy')
+const spawn = require('../packages/base-toolchain/lib/spawn')
+const copy = require('../packages/base-toolchain/lib/copy')
 const { expect } = require('chai')
 const path = require('path')
 const _glob = require('glob')
@@ -12,8 +12,10 @@ const { promisify } = require('util')
 const glob = promisify(_glob)
 const readFile = promisify(fs.readFile)
 
-const fixture = (...args) =>
-  path.resolve(__dirname, '..', '..', '..', 'fixtures', ...args)
+const repoRoot = path.resolve(__dirname, '..')
+const fixture = (...args) => path.resolve(repoRoot, 'fixtures', ...args)
+
+const jsToolchain = path.resolve(repoRoot, 'packages', 'js-toolchain')
 
 const expectFilesMatch = async ({ expectedDir, actualDir }) => {
   const files = await promisify(glob)('**', { cwd: expectedDir, nodir: true })
@@ -24,11 +26,8 @@ const expectFilesMatch = async ({ expectedDir, actualDir }) => {
   }
 }
 
-const repoRoot = path.resolve(__dirname, '..', '..', '..')
-const toolchainRoot = path.resolve(__dirname, '..', '..', 'js-toolchain')
-
-const toolchainPackageJson = require(path.join(toolchainRoot, 'package.json'))
-const { name: toolchainName } = toolchainPackageJson
+const jsToolchainPkgJson = require(path.join(jsToolchain, 'package.json'))
+const { name: jsToolchainName } = jsToolchainPkgJson
 
 const env = { ...process.env }
 delete env.NODE_ENV
@@ -37,8 +36,7 @@ delete env.INIT_CWD
 
 const yalc = path.resolve(repoRoot, 'node_modules', '.bin', 'yalc')
 
-async function linkToolchain(projectFolder) {
-  await spawn(yalc, ['publish'], { cwd: toolchainRoot, env })
+async function linkToolchain(projectFolder, toolchainName) {
   await spawn(yalc, ['add', '--dev', toolchainName], {
     cwd: projectFolder,
     env,
@@ -49,15 +47,11 @@ async function linkToolchain(projectFolder) {
 describe(`toolchain`, function () {
   this.timeout(60000)
 
-  before(async () => {
-    await spawn('yarn', { cwd: toolchainRoot }, env)
-  })
-
   it(`prepublishOnly works on mutate project`, async function () {
     const project = fixture('mutate', 'project')
     const expectedDist = fixture('mutate', 'expected-dist')
 
-    await linkToolchain(project)
+    await linkToolchain(project, jsToolchainName)
     await spawn('yarn', ['tc', 'prepublishOnly'], {
       cwd: project,
       env,
@@ -74,8 +68,11 @@ describe(`toolchain`, function () {
     const actualProject = fixture('bootstrap', 'actual')
     const expectedProject = fixture('bootstrap', 'expected')
 
-    await fs.remove(actualProject)
     await fs.mkdirs(actualProject)
+    for (const entry of await fs.readdir(actualProject)) {
+      if (entry !== 'node_modules')
+        await fs.remove(path.join(actualProject, entry))
+    }
     await copy({
       srcDir: project,
       destDir: actualProject,
@@ -83,7 +80,7 @@ describe(`toolchain`, function () {
       dot: true,
     })
 
-    await linkToolchain(actualProject)
+    await linkToolchain(actualProject, jsToolchainName)
     await spawn('yarn', ['tc', 'bootstrap', '--hard', '--no-husky'], {
       cwd: actualProject,
       env,

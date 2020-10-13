@@ -1,5 +1,5 @@
 /* eslint-env node */
 
 module.exports = {
-  ...require('./packages/js-toolchain/commitlint.config.js'),
+  ...require('./packages/base-toolchain/commitlint.config.js'),
 }
