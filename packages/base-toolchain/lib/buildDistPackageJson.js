@@ -26,6 +26,7 @@ async function buildDistPackageJson(dist) {
   delete packageJson.renovate
   if (packageJson.scripts) {
     delete packageJson.scripts.test
+    delete packageJson.scripts.prepublish
     delete packageJson.scripts.prepublishOnly
     delete packageJson.scripts.toolchain
     delete packageJson.scripts.tc
