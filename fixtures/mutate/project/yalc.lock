@@ -2,7 +2,11 @@
   "version": "v1",
   "packages": {
     "@jedwards1211/js-toolchain": {
-      "signature": "f0d44ff9ed8bfe2b22f5a2f17b27f478",
+      "signature": "0dc83233e80fd18f9fd9d116b19c8347",
+      "file": true
+    },
+    "@jedwards1211/base-toolchain": {
+      "signature": "dc0d862a4763bac1520d711d8a14a0d3",
       "file": true
     }
   }

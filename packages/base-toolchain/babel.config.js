@@ -1,10 +1,11 @@
 /* eslint-env node */
 
-const fs = require('fs-extra')
+const { dependencies } = require('./package.json')
 
 module.exports = function (api) {
-  const isFlow = fs.existsSync('.flowconfig')
-  api.cache.invalidate(() => (isFlow ? 'flow' : 'not flow'))
+  const isFlow = dependencies['@babel/preset-flow'] != null
+  const isTypescript =
+    !isFlow && dependencies['@babel/preset-typescript'] != null
 
   return {
     plugins: [
@@ -28,6 +29,9 @@ module.exports = function (api) {
         },
       ],
       isFlow && require.resolve('@babel/preset-flow'),
+      isTypescript && require.resolve('@babel/preset-typescript'),
+      dependencies['@babel/preset-react'] &&
+        require.resolve('@babel/preset-react'),
     ].filter(Boolean),
   }
 }

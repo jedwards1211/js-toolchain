@@ -5,9 +5,11 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "check": "prettier -c . && (cd packages/js-toolchain && ./lib/toolchain.js check) && (cd fixtures/mutate/project && yarn tc check)",
-    "test": "(cd packages/js-toolchain && ./lib/toolchain.js test)",
-    "tc": "./packages/js-toolchain/lib/toolchain.js"
+    "setup": "(cd packages/base-toolchain && yarn && node makeVariants.js) && (cd packages/js-toolchain && yarn)",
+    "check": "prettier -c *.{js,json,md} && (cd packages/base-toolchain && ./lib/toolchain.js check) && (cd fixtures/mutate/project && yarn tc check)",
+    "test": "(cd packages/base-toolchain && ./lib/toolchain.js test)",
+    "tc": "toolchain",
+    "toolchain": "toolchain"
   },
   "repository": {
     "type": "git",

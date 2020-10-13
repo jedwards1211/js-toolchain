@@ -1,16 +1,13 @@
 /* eslint-env node */
 
-import { describe, it } from 'mocha'
-import spawn from '../lib/spawn'
-import copy from '../lib/copy'
-import { expect } from 'chai'
-import path from 'path'
-import _glob from 'glob'
-import fs from 'fs-extra'
-import { promisify } from 'util'
-import toolchainPackageJson from '../package.json'
-
-const { name: toolchainName } = toolchainPackageJson
+const { describe, it, before } = require('mocha')
+const spawn = require('../lib/spawn')
+const copy = require('../lib/copy')
+const { expect } = require('chai')
+const path = require('path')
+const _glob = require('glob')
+const fs = require('fs-extra')
+const { promisify } = require('util')
 
 const glob = promisify(_glob)
 const readFile = promisify(fs.readFile)
@@ -28,7 +25,10 @@ const expectFilesMatch = async ({ expectedDir, actualDir }) => {
 }
 
 const repoRoot = path.resolve(__dirname, '..', '..', '..')
-const toolchainRoot = path.resolve(__dirname, '..')
+const toolchainRoot = path.resolve(__dirname, '..', '..', 'js-toolchain')
+
+const toolchainPackageJson = require(path.join(toolchainRoot, 'package.json'))
+const { name: toolchainName } = toolchainPackageJson
 
 const env = { ...process.env }
 delete env.NODE_ENV
@@ -48,6 +48,11 @@ async function linkToolchain(projectFolder) {
 
 describe(`toolchain`, function () {
   this.timeout(60000)
+
+  before(async () => {
+    await spawn('yarn', { cwd: toolchainRoot }, env)
+  })
+
   it(`prepublishOnly works on mutate project`, async function () {
     const project = fixture('mutate', 'project')
     const expectedDist = fixture('mutate', 'expected-dist')
@@ -55,7 +60,7 @@ describe(`toolchain`, function () {
     await linkToolchain(project)
     await spawn('yarn', ['tc', 'prepublishOnly'], {
       cwd: project,
-      env: { ...process.env, NODE_ENV: '', BABEL_ENV: '' },
+      env,
     })
 
     await expectFilesMatch({
