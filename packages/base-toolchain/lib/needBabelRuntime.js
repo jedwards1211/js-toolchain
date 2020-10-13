@@ -17,12 +17,13 @@ module.exports = async function needBabelRuntime(dist) {
     }
   }
 
-  for (const file of await promisify(glob)(
-    path.join(dist, '**.{js,cjs,mjs}')
-  )) {
-    const ast = await babel.parseAsync(await fs.readFile(file, 'utf8'), {
-      cwd: dist,
-    })
+  for (const file of await promisify(glob)('**.{js,cjs,mjs}', { cwd: dist })) {
+    const ast = await babel.parseAsync(
+      await fs.readFile(path.join(dist, file), 'utf8'),
+      {
+        cwd: dist,
+      }
+    )
     traverse(ast, {
       CallExpression(path) {
         if (
