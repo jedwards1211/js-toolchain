@@ -66,7 +66,7 @@ const variantsDepsTasks = variantNames.map((name, index) =>
 
 const yalcTasks = variantNames.map((name, index) =>
   task(`${name}:yalc`, [variants[index]], () =>
-    spawn('yalc', ['publish', variants[index]], { stdio: 'inherit' })
+    spawn(bin('yalc'), ['publish', variants[index]], { stdio: 'inherit' })
   )
 )
 
