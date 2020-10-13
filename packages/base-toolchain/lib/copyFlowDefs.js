@@ -6,7 +6,7 @@ const path = require('path')
 async function copyFlowDefs() {
   await copy({
     srcDir: 'src',
-    pattern: '**.{js,cjs,js.flow}',
+    pattern: '**.{js,cjs}',
     getDest: (file) =>
       path.join(
         'dist',
@@ -14,6 +14,11 @@ async function copyFlowDefs() {
           ? file
           : file.replace(/\.[^.\\/]+$/, '.js.flow')
       ),
+  })
+  await copy({
+    srcDir: 'src',
+    destDir: 'dist',
+    pattern: '**.{js.flow}',
   })
 }
 module.exports = copyFlowDefs
