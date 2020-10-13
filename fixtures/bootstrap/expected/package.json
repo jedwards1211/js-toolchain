@@ -44,10 +44,8 @@
     "@jedwards1211/js-toolchain": "file:.yalc/@jedwards1211/js-toolchain",
     "condition-circle": "^2.0.1",
     "copy": "^0.3.0",
-    "flow-bin": "^0.63.1",
     "husky": "^4.3.0",
-    "rimraf": "^2.6.0",
-    "typescript": "^3.9.7"
+    "rimraf": "^2.6.0"
   },
   "publishConfig": {
     "access": "public"

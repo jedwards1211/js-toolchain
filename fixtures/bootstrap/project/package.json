@@ -22,7 +22,9 @@
     "prepush": "npm test",
     "prepublishOnly": "npm run lint && flow && tsc && npm test && npm run build",
     "open:coverage": "open coverage/lcov-report/index.html",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "tc": "toolchain",
+    "toolchain": "toolchain"
   },
   "config": {
     "mocha": "--compilers js:babel-core/register ./test/**/*.js",
