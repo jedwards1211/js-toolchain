@@ -19,9 +19,11 @@ const {
 
 const buildingSelf = process.cwd() === path.resolve(__dirname, '..')
 
-const bin = (command) =>
-  path.resolve(__dirname, '..', 'node_modules', '.bin', command)
-const projBin = (command) => path.resolve('node_modules', '.bin', command)
+const resolve = (p) =>
+  path.relative('', path.normalize(path.resolve(__dirname, p)))
+
+const bin = (command) => resolve(`../node_modules/.bin/${command}`)
+const projBin = (command) => path.normalize(`node_modules/.bin/${command}`)
 
 const spawnable = (command, baseArgs, baseOptions = {}) => (
   args = [],
@@ -61,8 +63,8 @@ const eslint = spawnable(bin('eslint'), eslintArgs)
 
 const mochaArgs = () => [
   '-r',
-  require.resolve('./configureTests'),
-  require.resolve('./mochaWatchClearConsole'),
+  resolve('./configureTests.js'),
+  resolve('./mochaWatchClearConsole.js'),
   ...(Array.isArray(hostPackageConfig.mochaArgs)
     ? hostPackageConfig.mochaArgs
     : [
@@ -75,9 +77,7 @@ const mochaArgs = () => [
 const mocha = spawnable(bin('mocha'), mochaArgs)
 
 const nycArgs = () => [
-  ...(buildingSelf
-    ? ['--nycrc-path', require.resolve('./nyc.config-self.js')]
-    : []),
+  ...(buildingSelf ? ['--nycrc-path', resolve('./nyc.config-self.js')] : []),
 ]
 
 const nyc = spawnable(bin('nyc'), nycArgs)
@@ -226,6 +226,10 @@ const scripts = {
     run: () => {
       console.log(`${toolchainName}@${toolchainVersion}`) // eslint-disable-line no-console
     },
+  },
+  'flow-ci': {
+    description: `configure Flow for CI`,
+    run: () => require('./flowCi')(),
   },
 }
 exports.scripts = scripts
