@@ -19,11 +19,17 @@ jobs:
           name: Install Dependencies
           command: |
             yarn install --frozen-lockfile
-            cd packages/js-toolchain
+            cd packages/base-toolchain
             yarn install --frozen-lockfile
+
+      - run:
+          name: Build
+          command: |
+            cd packages/base-toolchain
+            node makeVariants.js
 
       - run:
           name: Test
           command: |
-            cd packages/js-toolchain
+            cd packages/base-toolchain
             yarn tc test
