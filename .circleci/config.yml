@@ -21,3 +21,9 @@ jobs:
       - run:
           name: Build and Test
           command: ./make prepublish
+
+      - run:
+          name: Release
+          command: |
+            (cd packages/js-toolchain && yarn semantic-release)
+            (cd packages/js-react-toolchain && yarn semantic-release)

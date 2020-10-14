@@ -46,27 +46,6 @@ rule(
 
 task('variants', variants)
 
-// const variantsDeps = variants.map((projectDir, index) =>
-//   rule(
-//     [
-//       path.join(projectDir, 'package.json'),
-//       path.join(projectDir, 'node_modules'),
-//     ],
-//     [
-//       variants[index],
-//       nodeModulesRule({
-//         promake,
-//         projectDir,
-//         command: 'yarn',
-//       }),
-//     ]
-//   )
-// )
-
-// const variantsDepsTasks = variantNames.map((name, index) =>
-//   task(`${name}:deps`, variantsDeps[index])
-// )
-
 const yalcTasks = variantNames.map((name, index) =>
   task(`${name}:yalc`, [variants[index]], () =>
     spawn(bin('yalc'), ['publish', variants[index]], { stdio: 'inherit' })

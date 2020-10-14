@@ -21,8 +21,8 @@
   "scripts": {
     "tc": "./lib/toolchain.js",
     "toolchain": "./lib/toolchain.js",
-    "semantic-release": "semantic-release",
-    "postinstall": "node lib/addScripts.js"
+    "postinstall": "node lib/addScripts.js",
+    "semantic-release": "semantic-release -e ../../semantic-release-monorepo/index.js"
   },
   "repository": {
     "type": "git",
