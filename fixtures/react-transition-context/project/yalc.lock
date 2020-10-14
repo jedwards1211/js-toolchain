@@ -1,0 +1,9 @@
+{
+  "version": "v1",
+  "packages": {
+    "@jedwards1211/js-react-toolchain": {
+      "signature": "e6b509d5e07e12e400a4f37d04e3af45",
+      "file": true
+    }
+  }
+}

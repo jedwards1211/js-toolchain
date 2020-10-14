@@ -1,6 +1,6 @@
 {
   "name": "@jedwards1211/js-toolchain",
-  "version": "0.0.0-development+fd88a2e2",
+  "version": "0.0.0-development+a486e0ee",
   "description": "build tools and package scripts for js packages",
   "main": "index.js",
   "author": "Andy Edwards",
@@ -90,5 +90,5 @@
     "semantic-release": "^17.1.2",
     "typescript": "^4.0.3"
   },
-  "yalcSig": "fd88a2e2152fb84a2e4b46bcc830659b"
+  "yalcSig": "a486e0eea612945d649303e1c31854c6"
 }

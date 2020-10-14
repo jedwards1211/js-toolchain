@@ -1,0 +1,39 @@
+{
+  "name": "react-transition-context",
+  "version": "0.0.0-development",
+  "description": "listen for entering/leaving inside nested transitions",
+  "sideEffects": false,
+  "scripts": {},
+  "config": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jcoreio/react-transition-context.git"
+  },
+  "keywords": [
+    "react",
+    "transitions",
+    "nested-transitions"
+  ],
+  "author": "Andy Edwards",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jcoreio/react-transition-context/issues"
+  },
+  "homepage": "https://github.com/jcoreio/react-transition-context#readme",
+  "dependencies": {
+    "@babel/runtime": "^7.11.2",
+    "prop-types": "^15.7.2"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "require": "./index.js",
+      "import": "./index.mjs"
+    }
+  },
+  "main": "./index.js",
+  "module": "./index.mjs"
+}

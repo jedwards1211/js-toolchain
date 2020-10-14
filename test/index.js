@@ -15,7 +15,25 @@ const readFile = promisify(fs.readFile)
 const repoRoot = path.resolve(__dirname, '..')
 const fixture = (...args) => path.resolve(repoRoot, 'fixtures', ...args)
 
-const jsToolchain = path.resolve(repoRoot, 'packages', 'js-toolchain')
+const toolchains = ['js', 'js-react']
+
+const toolchainDirs = Object.fromEntries(
+  toolchains.map((t) => [
+    t,
+    path.resolve(repoRoot, 'packages', `${t}-toolchain`),
+  ])
+)
+const toolchainNames = Object.fromEntries(
+  toolchains.map((t) => [
+    t,
+    require(path.resolve(
+      repoRoot,
+      'packages',
+      `${t}-toolchain`,
+      'package.json'
+    )).name,
+  ])
+)
 
 const expectFilesMatch = async ({ expectedDir, actualDir }) => {
   const files = await promisify(glob)('**', { cwd: expectedDir, nodir: true })
@@ -25,9 +43,6 @@ const expectFilesMatch = async ({ expectedDir, actualDir }) => {
     ).to.equal((await readFile(path.join(expectedDir, file), 'utf8')).trim())
   }
 }
-
-const jsToolchainPkgJson = require(path.join(jsToolchain, 'package.json'))
-const { name: jsToolchainName } = jsToolchainPkgJson
 
 const env = { ...process.env }
 delete env.NODE_ENV
@@ -51,7 +66,22 @@ describe(`toolchain`, function () {
     const project = fixture('mutate', 'project')
     const expectedDist = fixture('mutate', 'expected-dist')
 
-    await linkToolchain(project, jsToolchainName)
+    await linkToolchain(project, toolchainNames.js)
+    await spawn('yarn', ['tc', 'prepublishOnly'], {
+      cwd: project,
+      env,
+    })
+
+    await expectFilesMatch({
+      expectedDir: expectedDist,
+      actualDir: path.join(project, 'dist'),
+    })
+  })
+  it(`prepublishOnly works on react-transition-context project`, async function () {
+    const project = fixture('react-transition-context', 'project')
+    const expectedDist = fixture('react-transition-context', 'expected-dist')
+
+    await linkToolchain(project, toolchainNames['js-react'])
     await spawn('yarn', ['tc', 'prepublishOnly'], {
       cwd: project,
       env,
@@ -80,7 +110,7 @@ describe(`toolchain`, function () {
       dot: true,
     })
 
-    await linkToolchain(actualProject, jsToolchainName)
+    await linkToolchain(actualProject, toolchainNames.js)
     await spawn('yarn', ['tc', 'bootstrap', '--hard', '--no-husky'], {
       cwd: actualProject,
       env,

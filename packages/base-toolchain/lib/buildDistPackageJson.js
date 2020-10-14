@@ -3,7 +3,7 @@
 const path = require('path')
 const fs = require('fs-extra')
 const buildConditionalExports = require('./buildConditionalExports')
-const needBabelRuntime = require('./needBabelRuntime')
+const parseDependencies = require('./parseDependencies')
 const toolchainPackageJson = require('../package.json')
 const toolchainName = toolchainPackageJson.name
 
@@ -32,13 +32,15 @@ async function buildDistPackageJson(dist) {
     delete packageJson.scripts.tc
   }
   delete packageJson[toolchainName]
-  if (await needBabelRuntime(dist)) {
-    const dependencies =
-      packageJson.dependencies || (packageJson.dependencies = {})
-    dependencies['@babel/runtime'] =
-      toolchainPackageJson.dependencies['@babel/runtime']
-  } else if (packageJson.dependencies) {
-    delete packageJson.dependencies['@babel/runtime']
+  const parsedDependencies = await parseDependencies(dist)
+  for (const dep of ['@babel/runtime', 'prop-types']) {
+    if (parsedDependencies.has(dep)) {
+      const dependencies =
+        packageJson.dependencies || (packageJson.dependencies = {})
+      dependencies[dep] = toolchainPackageJson.dependencies[dep]
+    } else if (packageJson.dependencies) {
+      delete packageJson.dependencies[dep]
+    }
   }
   await fs.writeJson(path.join(dist, 'package.json'), packageJson, {
     spaces: 2,

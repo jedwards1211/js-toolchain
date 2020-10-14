@@ -170,6 +170,17 @@ const scripts = {
     run: (args = []) =>
       mocha([...args, '--watch'], { env: { NODE_ENV: 'test' } }),
   },
+  'test:debug': {
+    description: 'run tests in debug mode',
+    run: (args = []) =>
+      spawn(
+        process.execPath,
+        ['--inspect-brk', bin('mocha'), ...mochaArgs(), ...args],
+        {
+          env: { NODE_ENV: 'test' },
+        }
+      ),
+  },
   prepublishOnly: {
     description: 'run check, test, and build',
     run: async () => {
