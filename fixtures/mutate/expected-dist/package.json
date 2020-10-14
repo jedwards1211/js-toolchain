@@ -1,0 +1,40 @@
+{
+  "name": "@jcoreio/mutate",
+  "version": "0.0.0-development",
+  "private": true,
+  "description": "a few immutable.js-like mutation functions for plain objects",
+  "sideEffects": false,
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jcoreio/mutate.git"
+  },
+  "author": "Andy Edwards",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jcoreio/mutate/issues"
+  },
+  "homepage": "https://github.com/jcoreio/mutate#readme",
+  "dependencies": {
+    "iterall": "^1.3.0",
+    "@babel/runtime": "^7.11.2"
+  },
+  "config": {},
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "require": "./index.js",
+      "import": "./index.mjs"
+    },
+    "./setIn": {
+      "require": "./setIn.js",
+      "import": "./setIn.mjs"
+    },
+    "./updateIn": {
+      "require": "./updateIn.js",
+      "import": "./updateIn.mjs"
+    }
+  },
+  "main": "./index.js",
+  "module": "./index.mjs"
+}

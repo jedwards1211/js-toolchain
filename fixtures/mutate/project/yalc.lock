@@ -1,0 +1,13 @@
+{
+  "version": "v1",
+  "packages": {
+    "@jedwards1211/js-toolchain": {
+      "signature": "303b928503a1041412fa03a000a92341",
+      "file": true
+    },
+    "@jedwards1211/base-toolchain": {
+      "signature": "dc0d862a4763bac1520d711d8a14a0d3",
+      "file": true
+    }
+  }
+}
