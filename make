@@ -44,10 +44,6 @@ rule(
   () => require('./packages/base-toolchain/makeVariants')()
 )
 
-task('clean', async () => {
-  await Promise.all(variants.map((v) => fs.remove(v)))
-})
-
 task('variants', variants)
 
 const variantsDeps = variants.map((projectDir, index) =>

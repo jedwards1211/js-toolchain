@@ -56,10 +56,10 @@ const eslintArgs = () => [
   fs.existsSync('.eslintignore') ? '.eslintignore' : '.gitignore',
   '--ignore-pattern',
   'flow-typed/',
-  ...(dependencies['@babel/preset-typescript'] ? ['--ext', '.ts'] : []),
-  ...(dependencies['@babel/preset-typescript'] &&
-  dependencies['@babel/preset-react']
-    ? ['--ext', '.tsx']
+  ...(!buildingSelf && dependencies['@babel/preset-typescript']
+    ? dependencies['@babel/preset-react']
+      ? ['--ext', '.tsx', '--ext', '.ts']
+      : ['--ext', '.ts']
     : []),
 ]
 exports.eslintShellCommand = () => `${bin('eslint')} ${eslintArgs().join(' ')}`
@@ -73,7 +73,7 @@ const mochaArgs = () => [
   ...(Array.isArray(hostPackageConfig.mochaArgs)
     ? hostPackageConfig.mochaArgs
     : [
-        dependencies['@babel/preset-typescript']
+        !buildingSelf && dependencies['@babel/preset-typescript']
           ? dependencies['@babel/preset-react']
             ? 'test/**.{ts,tsx}'
             : 'test/**.ts'
@@ -153,7 +153,7 @@ const scripts = {
       if (await fs.exists('.flowconfig')) {
         await require('./copyFlowDefs')()
         if (await fs.exists('tsconfig.json')) await require('./copyTsDefs')()
-      } else if (dependencies['@babel/preset-typescript']) {
+      } else if (!buildingSelf && dependencies['@babel/preset-typescript']) {
         await tsc(['--emitDeclarationOnly', '--outDir', 'dist'])
       }
       await require('./copyOtherFilesToDist')()

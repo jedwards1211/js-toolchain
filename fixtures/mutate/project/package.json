@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/jcoreio/mutate#readme",
   "devDependencies": {
-    "@jedwards1211/base-toolchain": "file:.yalc/@jedwards1211/base-toolchain",
     "@jedwards1211/js-toolchain": "file:.yalc/@jedwards1211/js-toolchain",
     "flow-bin": "^0.135.0",
     "husky": "^4.3.0",

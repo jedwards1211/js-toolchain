@@ -56,6 +56,10 @@ async function linkToolchain(projectFolder, toolchainName) {
     cwd: projectFolder,
     env,
   })
+  await spawn(yalc, ['update'], {
+    cwd: projectFolder,
+    env,
+  })
   await spawn('yarn', { cwd: projectFolder, env })
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "@jedwards1211/js-react-toolchain",
-  "version": "0.0.0-development+d5cf9f2a",
+  "version": "0.0.0-development+880cf215",
   "description": "build tools and package scripts for js packages",
   "main": "index.js",
   "author": "Andy Edwards",
@@ -64,8 +64,8 @@
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
     "@jedwards1211/commitlint-config": "^1.0.1",
-    "@jedwards1211/eslint-config": "^2.0.0",
-    "@jedwards1211/eslint-config-flow": "^2.0.0",
+    "@jedwards1211/eslint-config": "^2.0.2",
+    "@jedwards1211/eslint-config-flow": "^3.0.0",
     "@jedwards1211/eslint-config-react": "^4.0.0",
     "babel-eslint": "^10.1.0",
     "babel-plugin-add-module-exports": "^1.0.4",
@@ -102,5 +102,5 @@
     "semantic-release": "^17.1.2",
     "typescript": "^4.0.3"
   },
-  "yalcSig": "d5cf9f2afc371b3d2b7e353777bd52ef"
+  "yalcSig": "880cf215c8b6b008d3cef0ec65a0b15d"
 }

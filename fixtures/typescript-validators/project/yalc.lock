@@ -2,7 +2,7 @@
   "version": "v1",
   "packages": {
     "@jedwards1211/ts-toolchain": {
-      "signature": "650cfedf1ff1b8baacd7ca6d07606fe9",
+      "signature": "c6f300400eca6127d02614d2c4d83e28",
       "file": true
     }
   }

@@ -5,6 +5,7 @@
 const fs = require('fs-extra')
 const path = require('path')
 const packageJson = require('./package.json')
+const { dependencies } = packageJson
 
 // flow-bin and typescript are shared by all toolchains in case def files are added
 // and need to be checked
@@ -24,7 +25,9 @@ const variants = {
       '@types/chai',
       '@types/mocha',
       '@types/node',
-      '@typescript-eslint/eslint-plugin',
+      ...Object.keys(dependencies).filter((dep) =>
+        dep.startsWith('@typescript-eslint/')
+      ),
     ]),
   },
 }

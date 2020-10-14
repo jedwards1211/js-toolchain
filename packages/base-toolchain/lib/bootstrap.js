@@ -205,8 +205,7 @@ module.exports = {
 
   const depsToRemove = Object.keys(packageJson.devDependencies).filter(
     (dep) =>
-      (noHusky || dep !== 'husky') &&
-      (obsoleteDeps.has(dep) || toolchainDepsSet.has(dep))
+      dep !== 'husky' && (obsoleteDeps.has(dep) || toolchainDepsSet.has(dep))
   )
   if (depsToRemove.length) {
     console.log(`removing unnecessary devDependencies...`) // eslint-disable-line no-console
