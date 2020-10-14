@@ -75,8 +75,10 @@ module.exports = async function makeVariants() {
           path.join(__dirname, file)
         )} -> ${path.relative(process.cwd(), path.join(out, file))}`
       )
-    await fs.remove(out)
     await fs.mkdirs(out)
+    for (const entry of await fs.readdir(out)) {
+      if (entry !== 'node_modules') await fs.remove(path.join(out, entry))
+    }
     const packageJson = await fs.readJson(path.join(__dirname, 'package.json'))
     const oldName = packageJson.name
     const newName = packageJson.name.replace(/[^/]+$/, name)
