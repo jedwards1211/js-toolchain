@@ -79,8 +79,8 @@ const yalcTasks = variantNames.map((name, index) =>
 
 const bin = (command) => path.join('node_modules', '.bin', command)
 
-task('test', [...variantsDeps, ...yalcTasks], () =>
-  spawn(bin('mocha'), ['test/**.js'], { stdio: 'inherit' })
+task('test', [...variantsDeps, ...yalcTasks], ({ args }) =>
+  spawn(bin('mocha'), ['test/**.js', ...args], { stdio: 'inherit' })
 )
 
 task('check', [baseToolchainDeps], async () => {

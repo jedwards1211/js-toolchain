@@ -51,7 +51,10 @@ function without(src, ...keys) {
   return src
 }
 
-async function bootstrap({ hard, noHusky } = {}) {
+async function bootstrap(options = {}) {
+  const args = options.args || {}
+  const hard = args.indexOf('--hard') >= 0
+  const noHusky = args.indexOf('--no-husky') >= 0
   if (hard) {
     await Promise.all(
       [
@@ -135,6 +138,7 @@ async function bootstrap({ hard, noHusky } = {}) {
     'lint-staged.config.js',
     'nyc.config.js',
     'prettier.config.js',
+    'husky.config.js',
   ]) {
     await writeConfig(
       file,
@@ -170,7 +174,8 @@ module.exports = {
       'eslintcConfig',
       'commitlint',
       'lint-staged',
-      'nyc'
+      'nyc',
+      'husky'
     )
     if (updatedPackageJson.config) {
       updatedPackageJson = set(updatedPackageJson, {
@@ -181,13 +186,6 @@ module.exports = {
   updatedPackageJson = merge(updatedPackageJson, {
     version: '0.0.0-development',
     sideEffects: false,
-    husky: {
-      hooks: {
-        'prepare-commit-msg': 'exec < /dev/tty && git cz --hook || true',
-        'pre-commit': 'toolchain pre-commit',
-        'commit-msg': 'toolchain commitlint -E HUSKY_GIT_PARAMS',
-      },
-    },
     scripts: {
       tc: 'toolchain',
       toolchain: 'toolchain',
@@ -245,8 +243,4 @@ module.exports = {
 
 module.exports = bootstrap
 
-if (require.main === module)
-  bootstrap({
-    hard: process.argv.indexOf('--hard') >= 0,
-    noHusky: process.argv.indexOf('--no-husky') >= 0,
-  })
+if (require.main === module) bootstrap({ args: process.argv })

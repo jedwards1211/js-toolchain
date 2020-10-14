@@ -42,23 +42,11 @@
   "homepage": "https://github.com/jcoreio/poll#readme",
   "devDependencies": {
     "@jedwards1211/js-toolchain": "file:.yalc/@jedwards1211/js-toolchain",
-    "condition-circle": "^2.0.1",
     "copy": "^0.3.0",
-    "husky": "^4.3.0",
     "rimraf": "^2.6.0"
   },
   "publishConfig": {
     "access": "public"
   },
-  "release": {
-    "verifyConditions": "condition-circle"
-  },
-  "sideEffects": false,
-  "husky": {
-    "hooks": {
-      "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true",
-      "pre-commit": "toolchain pre-commit",
-      "commit-msg": "toolchain commitlint -E HUSKY_GIT_PARAMS"
-    }
-  }
+  "sideEffects": false
 }

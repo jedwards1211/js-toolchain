@@ -1,6 +1,6 @@
 {
   "name": "@jedwards1211/js-toolchain",
-  "version": "0.0.0-development+303b9285",
+  "version": "0.0.0-development+fd88a2e2",
   "description": "build tools and package scripts for js packages",
   "main": "index.js",
   "author": "Andy Edwards",
@@ -37,13 +37,6 @@
     "url": "https://github.com/jedwards1211/js-toolchain/issues"
   },
   "homepage": "https://github.com/jedwards1211/js-toolchain#readme",
-  "husky": {
-    "hooks": {
-      "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true",
-      "pre-commit": "./lib/toolchain.js pre-commit",
-      "commit-msg": "./lib/toolchain.js commitlint -E HUSKY_GIT_PARAMS"
-    }
-  },
   "publishConfig": {
     "access": "public"
   },
@@ -97,5 +90,5 @@
     "semantic-release": "^17.1.2",
     "typescript": "^4.0.3"
   },
-  "yalcSig": "303b928503a1041412fa03a000a92341"
+  "yalcSig": "fd88a2e2152fb84a2e4b46bcc830659b"
 }

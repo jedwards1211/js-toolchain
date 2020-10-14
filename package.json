@@ -28,13 +28,6 @@
     "semantic-release": "^17.2.1",
     "yalc": "^1.0.0-pre.45"
   },
-  "husky": {
-    "hooks": {
-      "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true",
-      "pre-commit": "./make check",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
-  },
   "config": {
     "commitizen": {
       "path": "cz-conventional-changelog"

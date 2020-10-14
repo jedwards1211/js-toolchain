@@ -20,7 +20,14 @@ module.exports = {
     'shared-node-browser': true,
     es2020: true,
   },
+  settings: {},
 }
 
 if (!dependencies['@jedwards1211/eslint-config-typescript'])
   module.exports.parser = require.resolve('babel-eslint')
+
+if (dependencies['@jedwards1211/eslint-config-react'])
+  module.exports.settings.react = {
+    version: 'detect',
+    flowVersion: 'detect',
+  }
