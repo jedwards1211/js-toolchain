@@ -1,5 +1,4 @@
 node_modules
-fixtures/*/actual/
 fixtures/*/project/.yalc/
 fixtures/*/project/yalc.lock
 packages/js-toolchain/

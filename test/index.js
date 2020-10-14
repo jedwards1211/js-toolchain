@@ -9,12 +9,14 @@ const _glob = require('glob')
 const fs = require('fs-extra')
 const { promisify } = require('util')
 
-const glob = promisify(_glob)
 const readFile = promisify(fs.readFile)
 
 const repoRoot = path.resolve(__dirname, '..')
 const fixture = (...args) => path.resolve(repoRoot, 'fixtures', ...args)
 
+const tmp = path.join(require('os').tmpdir(), path.basename(repoRoot))
+
+const glob = promisify(_glob)
 const toolchains = ['js', 'js-react', 'ts']
 
 const toolchainDirs = Object.fromEntries(
@@ -67,10 +69,13 @@ const ignored = new Set(['.nyc_output', 'coverage', 'dist', 'node_modules'])
 
 async function doFixtureTest(name, toolchainName, action) {
   const projectDir = fixture(name, 'project')
-  const actualDir = fixture(name, 'actual')
+  const actualDir = path.join(tmp, name)
   const expectedDir = fixture(name, 'expected')
 
   await fs.mkdirs(actualDir)
+  if (!(await fs.exists(path.join(actualDir, '.git')))) {
+    await spawn('git', ['init'], { cwd: actualDir, env })
+  }
   for (const entry of await fs.readdir(actualDir)) {
     if (entry !== 'node_modules') await fs.remove(path.join(actualDir, entry))
   }
