@@ -50,14 +50,21 @@ task('clean', async () => {
 
 task('variants', variants)
 
-const variantsDeps = variants.map((projectDir) =>
-  rule(path.join(projectDir, 'node_modules'), [
-    nodeModulesRule({
-      promake,
-      projectDir,
-      command: 'yarn',
-    }),
-  ])
+const variantsDeps = variants.map((projectDir, index) =>
+  rule(
+    [
+      path.join(projectDir, 'package.json'),
+      path.join(projectDir, 'node_modules'),
+    ],
+    [
+      variants[index],
+      nodeModulesRule({
+        promake,
+        projectDir,
+        command: 'yarn',
+      }),
+    ]
+  )
 )
 
 const variantsDepsTasks = variantNames.map((name, index) =>
