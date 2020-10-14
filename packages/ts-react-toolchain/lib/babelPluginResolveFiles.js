@@ -1,4 +1,16 @@
 const path = require('path')
+const resolve = require('resolve')
+const { dependencies } = require('../package.json')
+
+const extensions = [
+  dependencies['@babel/preset-typescript'] &&
+  dependencies['@babel/preset-react']
+    ? '.tsx'
+    : null,
+  dependencies['@babel/preset-typescript'] ? '.ts' : null,
+  '.js',
+  '.json',
+].filter(Boolean)
 
 /**
  * Sets the extension on all relative imports encountered to the extension provided in the plugin options.
@@ -7,7 +19,10 @@ module.exports = function babelPluginResolveFiles({ types: t }, opts) {
   function convertSource(file, source) {
     if (!source.startsWith('.')) return source
     const dir = path.dirname(file)
-    source = path.relative(dir, require.resolve(path.resolve(dir, source)))
+    source = path.relative(
+      dir,
+      resolve.sync(path.resolve(dir, source), { extensions })
+    )
     if (!source.startsWith('.')) source = `./${source}`
     if (source.endsWith('.json')) return source
     return source.replace(/(\.[^./\\]+)?$/, opts.extension)

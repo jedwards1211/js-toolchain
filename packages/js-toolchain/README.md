@@ -10,7 +10,7 @@ This is my personal skeleton for creating an npm package with JS(/flow) source c
 ## Assumptions
 
 - All source files are in `src`
-- Test files are in `test`. You can override this by specifying options for mocha in `config.mocha` in your `package.json`.
+- Test files are in `test`. You can override this by specifying options for mocha in `['@jedwards1211/js-toolchain'].mochaArgs` in your `package.json`.
 - You want to publish the package via `semantic-release`
 - You're using CircleCI
 
@@ -29,6 +29,8 @@ Instead of running scripts from your `package.json`, you can run them with the `
 to see all of the available commands.
 
 ## Package Publishing
+
+<!-- generated package publishing -->
 
 Files to publish are output/copied into the `dist` folder and then published from there. This includes a derived
 `package.json` with various development-only fields removed and automatically-generated `main`, `module`, and `exports` fields added.

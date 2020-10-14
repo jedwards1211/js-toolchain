@@ -16,7 +16,7 @@ module.exports = function (api) {
       require.resolve('@babel/plugin-transform-runtime'),
       require.resolve('@babel/plugin-proposal-class-properties'),
       api.env('coverage') && require.resolve('babel-plugin-istanbul'),
-      [
+      !api.env(['test', 'coverage']) && [
         require.resolve('./lib/babelPluginResolveFiles.js'),
         { extension: api.env('mjs') ? '.mjs' : '.js' },
       ],

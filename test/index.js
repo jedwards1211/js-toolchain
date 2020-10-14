@@ -15,7 +15,7 @@ const readFile = promisify(fs.readFile)
 const repoRoot = path.resolve(__dirname, '..')
 const fixture = (...args) => path.resolve(repoRoot, 'fixtures', ...args)
 
-const toolchains = ['js', 'js-react']
+const toolchains = ['js', 'js-react', 'ts']
 
 const toolchainDirs = Object.fromEntries(
   toolchains.map((t) => [
@@ -82,6 +82,21 @@ describe(`toolchain`, function () {
     const expectedDist = fixture('react-transition-context', 'expected-dist')
 
     await linkToolchain(project, toolchainNames['js-react'])
+    await spawn('yarn', ['tc', 'prepublishOnly'], {
+      cwd: project,
+      env,
+    })
+
+    await expectFilesMatch({
+      expectedDir: expectedDist,
+      actualDir: path.join(project, 'dist'),
+    })
+  })
+  it(`prepublishOnly works on typescript-validators project`, async function () {
+    const project = fixture('typescript-validators', 'project')
+    const expectedDist = fixture('typescript-validators', 'expected-dist')
+
+    await linkToolchain(project, toolchainNames['ts'])
     await spawn('yarn', ['tc', 'prepublishOnly'], {
       cwd: project,
       env,

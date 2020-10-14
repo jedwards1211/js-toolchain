@@ -9,4 +9,12 @@ if (dependencies['enzyme']) {
   configure({ adapter: new Adapter() })
 }
 
-require('@babel/register')({ extensions: ['.js', '.jsx', '.ts', '.tsx'] })
+require('@babel/register')({
+  extensions: [
+    dependencies['@babel/preset-typescript'] &&
+      dependencies['@babel/preset-react'] &&
+      '.tsx',
+    dependencies['@babel/preset-typescript'] && '.ts',
+    '.js',
+  ].filter(Boolean),
+})

@@ -13,6 +13,7 @@ async function buildDistPackageJson(dist) {
   const main = exports['.'] ? exports['.'].require : null
   const module = exports['.'] ? exports['.'].import : null
   if (!packageJson.exports) packageJson.exports = exports
+  packageJson.exports['./package.json'] = './package.json'
   if (!packageJson.main && main) packageJson.main = main
   if (!packageJson.module && module) packageJson.module = module
   delete packageJson.devDependencies
@@ -33,7 +34,6 @@ async function buildDistPackageJson(dist) {
   }
   delete packageJson[toolchainName]
   const parsedDependencies = await parseDependencies(dist)
-  console.log(parsedDependencies)
   for (const dep of ['@babel/runtime', 'prop-types']) {
     if (parsedDependencies.has(dep)) {
       const dependencies =

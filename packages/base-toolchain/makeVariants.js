@@ -20,7 +20,6 @@ const variants = {
   'ts-toolchain': {
     dependencies: new Set([
       '@babel/preset-typescript',
-      '@jedwards1211/eslint-config-react',
       '@jedwards1211/eslint-config-typescript',
       '@types/chai',
       '@types/mocha',

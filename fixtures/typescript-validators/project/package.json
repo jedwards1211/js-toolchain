@@ -1,0 +1,77 @@
+{
+  "name": "typescript-validators",
+  "version": "0.0.0-development",
+  "description": "complex type validators that generate TypeScript types for you",
+  "sideEffects": false,
+  "scripts": {
+    "lint": "eslint $npm_package_config_lint",
+    "lint:fix": "eslint $npm_package_config_lint",
+    "lint:watch": "esw --watch $npm_package_config_lint",
+    "prettier": "prettier --write .babelrc.js *.json *.md *.ts '{src,test}/**/*.{js,ts}'",
+    "prettier:check": "prettier --list-different .babelrc.js *.json *.md *.ts '{src,test}/**/*.{js,ts}'",
+    "tsc": "tsc --noEmit",
+    "tsc:watch": "npm run tsc -- --watch",
+    "clean": "rimraf es lib $(cd src; ls) *.js *.d.ts",
+    "build": "npm run clean && npm run build:types && npm run build:js",
+    "build:types": "tsc --emitDeclarationOnly",
+    "build:js": "babel src --out-dir es --extensions \".ts\" --source-maps inline && cross-env BABEL_ENV=es5 babel src --out-dir . --extensions \".ts\"",
+    "test": "toolchain test",
+    "test:watch": "cross-env NODE_ENV=test BABEL_ENV=test mocha $npm_package_config_mocha --watch --watch-extensions js,ts",
+    "test:debug": "cross-env NODE_ENV=test BABEL_ENV=test mocha --inspect-brk $npm_package_config_mocha",
+    "codecov": "nyc report --reporter=text-lcov > coverage.lcov; codecov",
+    "prepublishOnly": "echo This package is meant to be published by semantic-release from the dist build directory. && exit 1",
+    "open:coverage": "open coverage/lcov-report/index.html",
+    "semantic-release": "semantic-release",
+    "tc": "toolchain",
+    "toolchain": "toolchain"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "require": "./index.js",
+      "import": "./index.mjs"
+    }
+  },
+  "config": {
+    "lint": "--cache --ext .js,.ts src test",
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jcoreio/typescript-validators.git"
+  },
+  "keywords": [
+    "api",
+    "assertion",
+    "assert",
+    "defensive-programming",
+    "json",
+    "json-schema",
+    "js-schema",
+    "object-schema",
+    "runtime-types",
+    "schema",
+    "type",
+    "types",
+    "typescript",
+    "validate",
+    "validation",
+    "validation-schema",
+    "validator"
+  ],
+  "author": "Andy Edwards",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jcoreio/typescript-validators/issues"
+  },
+  "homepage": "https://github.com/jcoreio/typescript-validators#readme",
+  "devDependencies": {
+    "@jedwards1211/ts-toolchain": "file:.yalc/@jedwards1211/ts-toolchain",
+    "dedent-js": "^1.0.1"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.1.5"
+  }
+}

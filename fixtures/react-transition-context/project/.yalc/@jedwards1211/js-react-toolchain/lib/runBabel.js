@@ -13,7 +13,11 @@ async function runBabel({
 }) {
   await fs.mkdirs(destDir)
   for (const file of await promisify(glob)(
-    dependencies['@babel/preset-typescript'] ? '**.{ts,tsx}' : '**.{js,cjs}',
+    dependencies['@babel/preset-typescript']
+      ? dependencies['@babel/preset-react']
+        ? '**.{ts,tsx}'
+        : '**.ts'
+      : '**.js',
     {
       cwd: srcDir,
     }
