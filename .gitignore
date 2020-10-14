@@ -1,1 +1,8 @@
 node_modules
+fixtures/*/actual/
+fixtures/*/project/.yalc/
+fixtures/*/project/yalc.lock
+packages/js-toolchain/
+packages/js-react-toolchain/
+packages/ts-toolchain/
+packages/ts-react-toolchain/

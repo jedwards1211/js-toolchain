@@ -1,9 +1,0 @@
-{
-  "version": "v1",
-  "packages": {
-    "@jedwards1211/js-toolchain": {
-      "signature": "bf0bf09588b5dc9830cc337b3ae5df11",
-      "file": true
-    }
-  }
-}

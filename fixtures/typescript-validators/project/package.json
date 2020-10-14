@@ -68,7 +68,6 @@
   },
   "homepage": "https://github.com/jcoreio/typescript-validators#readme",
   "devDependencies": {
-    "@jedwards1211/ts-toolchain": "file:.yalc/@jedwards1211/ts-toolchain",
     "dedent-js": "^1.0.1"
   },
   "dependencies": {

@@ -63,81 +63,56 @@ async function linkToolchain(projectFolder, toolchainName) {
   await spawn('yarn', { cwd: projectFolder, env })
 }
 
+const ignored = new Set(['.nyc_output', 'coverage', 'dist', 'node_modules'])
+
+async function doFixtureTest(name, toolchainName, action) {
+  const projectDir = fixture(name, 'project')
+  const actualDir = fixture(name, 'actual')
+  const expectedDir = fixture(name, 'expected')
+
+  await fs.mkdirs(actualDir)
+  for (const entry of await fs.readdir(actualDir)) {
+    if (entry !== 'node_modules') await fs.remove(path.join(actualDir, entry))
+  }
+  for (const file of await fs.readdir(projectDir)) {
+    if (!ignored.has(file))
+      await fs.copy(path.join(projectDir, file), path.join(actualDir, file))
+  }
+
+  await linkToolchain(actualDir, toolchainName)
+
+  await action({ cwd: actualDir })
+
+  await expectFilesMatch({
+    actualDir,
+    expectedDir,
+  })
+}
+
 describe(`toolchain`, function () {
   this.timeout(120000)
 
   it(`prepublishOnly works on mutate project`, async function () {
-    const project = fixture('mutate', 'project')
-    const expectedDist = fixture('mutate', 'expected-dist')
-
-    await linkToolchain(project, toolchainNames.js)
-    await spawn('yarn', ['tc', 'prepublishOnly'], {
-      cwd: project,
-      env,
-    })
-
-    await expectFilesMatch({
-      expectedDir: expectedDist,
-      actualDir: path.join(project, 'dist'),
-    })
+    await doFixtureTest('mutate', toolchainNames.js, ({ cwd }) =>
+      spawn('yarn', ['tc', 'prepublishOnly'], { cwd, env })
+    )
   })
   it(`prepublishOnly works on react-transition-context project`, async function () {
-    const project = fixture('react-transition-context', 'project')
-    const expectedDist = fixture('react-transition-context', 'expected-dist')
-
-    await linkToolchain(project, toolchainNames['js-react'])
-    await spawn('yarn', ['tc', 'prepublishOnly'], {
-      cwd: project,
-      env,
-    })
-
-    await expectFilesMatch({
-      expectedDir: expectedDist,
-      actualDir: path.join(project, 'dist'),
-    })
+    await doFixtureTest(
+      'react-transition-context',
+      toolchainNames['js-react'],
+      ({ cwd }) => spawn('yarn', ['tc', 'prepublishOnly'], { cwd, env })
+    )
   })
   it(`prepublishOnly works on typescript-validators project`, async function () {
-    const project = fixture('typescript-validators', 'project')
-    const expectedDist = fixture('typescript-validators', 'expected-dist')
-
-    await linkToolchain(project, toolchainNames['ts'])
-    await spawn('yarn', ['tc', 'prepublishOnly'], {
-      cwd: project,
-      env,
-    })
-
-    await expectFilesMatch({
-      expectedDir: expectedDist,
-      actualDir: path.join(project, 'dist'),
-    })
+    await doFixtureTest('typescript-validators', toolchainNames.ts, ({ cwd }) =>
+      spawn('yarn', ['tc', 'prepublishOnly'], { cwd, env })
+    )
   })
   it(`bootstrap --hard`, async function () {
     this.timeout(60000 * 10)
-    const project = fixture('bootstrap', 'project')
-    const actualProject = fixture('bootstrap', 'actual')
-    const expectedProject = fixture('bootstrap', 'expected')
-
-    await fs.mkdirs(actualProject)
-    for (const entry of await fs.readdir(actualProject)) {
-      if (entry !== 'node_modules')
-        await fs.remove(path.join(actualProject, entry))
-    }
-    await copy({
-      srcDir: project,
-      destDir: actualProject,
-      pattern: '**',
-      dot: true,
-    })
-
-    await linkToolchain(actualProject, toolchainNames.js)
-    await spawn('yarn', ['tc', 'bootstrap', '--hard', '--no-husky'], {
-      cwd: actualProject,
-      env,
-    })
-
-    await expectFilesMatch({
-      actualDir: actualProject,
-      expectedDir: expectedProject,
-    })
+    await doFixtureTest('bootstrap', toolchainNames.js, ({ cwd }) =>
+      spawn('yarn', ['tc', 'bootstrap', '--hard', '--no-husky'], { cwd, env })
+    )
   })
 })
