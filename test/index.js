@@ -64,7 +64,7 @@ async function linkToolchain(projectFolder, toolchainName) {
 }
 
 describe(`toolchain`, function () {
-  this.timeout(60000)
+  this.timeout(120000)
 
   it(`prepublishOnly works on mutate project`, async function () {
     const project = fixture('mutate', 'project')
