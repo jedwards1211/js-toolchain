@@ -5,7 +5,6 @@ const path = require('path')
 const fs = require('fs-extra')
 const toolchainPackageJson = require('../package.json')
 const toolchainName = toolchainPackageJson.name
-const toolchainDeps = toolchainPackageJson.dependencies
 const toolchainDepsSet = new Set(Object.keys(toolchainPackageJson.dependencies))
 const updateFile = require('./updateFile')
 const obsoleteDeps = require('./obsoleteDeps')
@@ -54,7 +53,6 @@ function without(src, ...keys) {
 async function bootstrap(options = {}) {
   const args = options.args || {}
   const hard = args.indexOf('--hard') >= 0
-  const noHusky = args.indexOf('--no-husky') >= 0
   if (hard) {
     await Promise.all(
       [
@@ -211,9 +209,8 @@ module.exports = {
     console.log(`removing unnecessary devDependencies...`) // eslint-disable-line no-console
     await spawn('yarn', ['remove', ...depsToRemove])
   }
-
-  if (!noHusky)
-    await spawn('yarn', ['add', '--dev', `husky@${toolchainDeps.husky}`])
+  if (packageJson.devDependencies.husky)
+    await spawn('yarn', ['remove', '--ignore-scripts', 'huskyk'])
 
   const ignores = ['coverage', '.nyc_output', 'node_modules', 'dist']
 

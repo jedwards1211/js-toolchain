@@ -117,7 +117,7 @@ describe(`toolchain`, function () {
   it(`bootstrap --hard`, async function () {
     this.timeout(60000 * 10)
     await doFixtureTest('bootstrap', toolchainNames.js, ({ cwd }) =>
-      spawn('yarn', ['tc', 'bootstrap', '--hard', '--no-husky'], { cwd, env })
+      spawn('yarn', ['tc', 'bootstrap', '--hard'], { cwd, env })
     )
   })
 })
