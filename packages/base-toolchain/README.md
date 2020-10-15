@@ -30,12 +30,10 @@ to see all of the available commands.
 
 ## Package Publishing
 
-<!-- generated package publishing -->
-
 Files to publish are output/copied into the `dist` folder and then published from there. This includes a derived
 `package.json` with various development-only fields removed and automatically-generated `main`, `module`, and `exports` fields added.
 
-The toolchain will do the following:
+The toolchain will do the following for JS (similar for TS):
 
 - Transpile `src/**.js` to `dist/**.js` (CommonJS modules)
 - Transpile `src/**.js` to `dist/**.mjs` (ES modules)
