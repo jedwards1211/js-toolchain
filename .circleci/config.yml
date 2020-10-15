@@ -23,8 +23,11 @@ jobs:
           command: ./make prepublish
 
       - run:
-          name: Release
-          command: |
-            (cd packages/js-toolchain && yarn semantic-release)
-            (cd packages/js-react-toolchain && yarn semantic-release)
-            (cd packages/ts-toolchain && yarn semantic-release)
+          name: Release js-toolchain
+          command: cd packages/js-toolchain && yarn semantic-release
+      - run:
+          name: Release js-react-toolchain
+          command: cd packages/js-react-toolchain && yarn semantic-release
+      - run:
+          name: Release ts-toolchain
+          command: cd packages/ts-toolchain && yarn semantic-release
