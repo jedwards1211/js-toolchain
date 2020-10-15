@@ -3,7 +3,7 @@ const debug = require('debug')('semantic-release:monorepo')
 
 const getAffectedPackages = (commit) => {
   const match = /^affects: (.+)/.exec(commit.message)
-  return match ? match[1].split(/\s*,\s*/g) : []
+  return match ? match[1].split(/\s*,\s*/g).map((s) => s.trim()) : []
 }
 
 const onlyPackageCommits = async (commits) => {

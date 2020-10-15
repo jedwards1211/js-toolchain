@@ -1,8 +1,8 @@
-const mapNextReleaseVersion = (toTag) => (config) => ({
+const mapNextReleaseVersion = (toTag) => async (config) => ({
   ...config,
   nextRelease: {
     ...config.nextRelease,
-    version: toTag(config.nextRelease.version),
+    version: await toTag(config.nextRelease.version),
   },
 })
 
