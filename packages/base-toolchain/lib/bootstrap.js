@@ -210,7 +210,7 @@ module.exports = {
     await spawn('yarn', ['remove', ...depsToRemove])
   }
   if (packageJson.devDependencies.husky)
-    await spawn('yarn', ['remove', '--ignore-scripts', 'huskyk'])
+    await spawn('yarn', ['remove', '--ignore-scripts', 'husky'])
 
   const ignores = ['coverage', '.nyc_output', 'node_modules', 'dist']
 
