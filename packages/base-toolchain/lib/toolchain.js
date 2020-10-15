@@ -11,7 +11,7 @@ const hostPackageConfig = require('./hostPackageConfig')
 const hostPackageJson = require('./hostPackageJson')
 const toolchainPackageJson = require('../package.json')
 const runBabel = require('./runBabel')
-const resolve = require('resolve')
+const resolveBin = require('resolve-bin')
 const {
   name: toolchainName,
   version: toolchainVersion,
@@ -33,17 +33,7 @@ const bin = (pkg, command = pkg) => {
   )
   if (fs.existsSync(naivePath)) return path.relative('', naivePath)
 
-  const packageJsonPath = resolve.sync(`${pkg}/package.json`)
-  const dir = path.dirname(packageJsonPath)
-  const packageJson = fs.readJsonSync(packageJsonPath)
-  if (typeof packageJson.bin === 'string')
-    return path.relative('', path.resolve(dir, packageJson.bin))
-  if (!packageJson.bin[command]) {
-    throw new Error(
-      `command ${command} not found in package ${relativePath(dir)}`
-    )
-  }
-  return path.relative('', path.resolve(dir, packageJson.bin[command]))
+  return path.relative('', resolveBin.sync(pkg, { executable: command }))
 }
 
 const spawnable = (command, baseArgs, baseOptions = {}) => (
