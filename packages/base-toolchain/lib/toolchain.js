@@ -11,6 +11,7 @@ const hostPackageConfig = require('./hostPackageConfig')
 const hostPackageJson = require('./hostPackageJson')
 const toolchainPackageJson = require('../package.json')
 const runBabel = require('./runBabel')
+const resolve = require('resolve')
 const {
   name: toolchainName,
   version: toolchainVersion,
@@ -19,11 +20,31 @@ const {
 
 const buildingSelf = process.cwd() === path.resolve(__dirname, '..')
 
-const resolve = (p) =>
+const relativePath = (p) =>
   path.relative('', path.normalize(path.resolve(__dirname, p)))
 
-const bin = (command) => resolve(`../node_modules/.bin/${command}`)
-const projBin = (command) => path.normalize(`node_modules/.bin/${command}`)
+const bin = (pkg, command = pkg) => {
+  const naivePath = path.resolve(
+    __dirname,
+    '..',
+    'node_modules',
+    '.bin',
+    command
+  )
+  if (fs.existsSync(naivePath)) return path.relative('', naivePath)
+
+  const packageJsonPath = resolve.sync(`${pkg}/package.json`)
+  const dir = path.dirname(packageJsonPath)
+  const packageJson = fs.readJsonSync(packageJsonPath)
+  if (typeof packageJson.bin === 'string')
+    return path.relative('', path.resolve(dir, packageJson.bin))
+  if (!packageJson.bin[command]) {
+    throw new Error(
+      `command ${command} not found in package ${relativePath(dir)}`
+    )
+  }
+  return path.relative('', path.resolve(dir, packageJson.bin[command]))
+}
 
 const spawnable = (command, baseArgs, baseOptions = {}) => (
   args = [],
@@ -68,8 +89,8 @@ const eslint = spawnable(bin('eslint'), eslintArgs)
 
 const mochaArgs = () => [
   '-r',
-  resolve('./configureTests.js'),
-  resolve('./mochaWatchClearConsole.js'),
+  relativePath('./configureTests.js'),
+  relativePath('./mochaWatchClearConsole.js'),
   ...(Array.isArray(hostPackageConfig.mochaArgs)
     ? hostPackageConfig.mochaArgs
     : [
@@ -84,7 +105,9 @@ const mochaArgs = () => [
 const mocha = spawnable(bin('mocha'), mochaArgs)
 
 const nycArgs = () => [
-  ...(buildingSelf ? ['--nycrc-path', resolve('./nyc.config-self.js')] : []),
+  ...(buildingSelf
+    ? ['--nycrc-path', relativePath('./nyc.config-self.js')]
+    : []),
 ]
 
 const nyc = spawnable(bin('nyc'), nycArgs)
@@ -102,8 +125,8 @@ const getCiUrl = () => {
   return `https://app.circleci.com/pipelines/github/${match[1]}/${match[2]}`
 }
 
-const flow = spawnable(projBin('flow'))
-const tsc = spawnable(projBin('tsc', ['--noEmit']))
+const flow = spawnable(bin('flow-bin', 'flow'))
+const tsc = spawnable(bin('typescript', 'tsc'), ['--noEmit'])
 
 const scripts = {
   prettier: {
@@ -232,7 +255,7 @@ const scripts = {
   release: {
     description: 'release package with semantic-release',
     run: (args = []) =>
-      spawn(bin('semantic-release'), args, { cwd: path.resolve('dist') }),
+      spawn(bin('semantic-release'), args, { cwd: relativePath('dist') }),
   },
   bootstrap: {
     description: 'prepare your project',
