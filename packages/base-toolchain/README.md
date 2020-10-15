@@ -28,6 +28,33 @@ The bootstrap script will modify your package.json, .gitignore, .circleci/config
 Instead of running scripts from your `package.json`, you can run them with the `yarn toolchain` command (or `yarn tc`), for example `yarn toolchain lint`. Run `yarn toolchain` by itself
 to see all of the available commands.
 
+## Customization
+
+You can customize the config files created by the bootstrap process:
+
+- `babel.config.js`
+- `commitlint.config.js`
+- `husky.config.js`
+- `lint-staged.config.js`
+- `nyc.config.js`
+- `prettier.config.js`
+
+You can also set the following options in the `@jedwards1211/base-toolchain` property in your `package.json`:
+
+- `mochaArgs`: an array of additional arguments to mocha (default: ["test/**.js"], or `.ts`/`.tsx` depending on the toolchain)
+- `noBabelRuntime`: if `true`, disables `@babel/plugin-transform-flow-runtime`
+
+For example:
+
+```
+{
+  "name": "foo",
+  "@jedwards1211/base-toolchain": {
+    "mochaArgs": ["test/index.js"]
+  }
+}
+```
+
 ## Package Publishing
 
 Files to publish are output/copied into the `dist` folder and then published from there. This includes a derived

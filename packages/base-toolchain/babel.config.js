@@ -1,6 +1,7 @@
 /* eslint-env node */
 
 const { dependencies } = require('./package.json')
+const hostPackageConfig = require('./lib/hostPackageConfig')
 
 module.exports = function (api) {
   const isFlow = dependencies['@babel/preset-flow'] != null
@@ -13,7 +14,8 @@ module.exports = function (api) {
   return {
     plugins: [
       resolveIfDep('@babel/plugin-transform-flow-strip-types'),
-      require.resolve('@babel/plugin-transform-runtime'),
+      !hostPackageConfig.noBabelRuntime &&
+        require.resolve('@babel/plugin-transform-runtime'),
       require.resolve('@babel/plugin-proposal-class-properties'),
       api.env('coverage') && require.resolve('babel-plugin-istanbul'),
       !api.env(['test', 'coverage']) && [
