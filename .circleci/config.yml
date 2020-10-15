@@ -27,3 +27,4 @@ jobs:
           command: |
             (cd packages/js-toolchain && yarn semantic-release)
             (cd packages/js-react-toolchain && yarn semantic-release)
+            (cd packages/ts-toolchain && yarn semantic-release)
