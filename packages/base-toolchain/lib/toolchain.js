@@ -126,7 +126,7 @@ const getCiUrl = () => {
 }
 
 const flow = spawnable(bin('flow-bin', 'flow'))
-const tsc = spawnable(bin('typescript', 'tsc'), ['--noEmit'])
+const tsc = spawnable(bin('typescript', 'tsc'))
 
 const scripts = {
   prettier: {
