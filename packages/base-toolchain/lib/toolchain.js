@@ -31,9 +31,9 @@ const bin = (pkg, command = pkg) => {
     '.bin',
     command
   )
-  if (fs.existsSync(naivePath)) return path.relative('', naivePath)
+  if (fs.existsSync(naivePath)) return naivePath
 
-  return path.relative('', resolveBin.sync(pkg, { executable: command }))
+  return resolveBin.sync(pkg, { executable: command })
 }
 
 const spawnable = (command, baseArgs, baseOptions = {}) => (
@@ -245,7 +245,7 @@ const scripts = {
   release: {
     description: 'release package with semantic-release',
     run: (args = []) =>
-      spawn(bin('semantic-release'), args, { cwd: relativePath('dist') }),
+      spawn(bin('semantic-release'), args, { cwd: path.resolve('dist') }),
   },
   bootstrap: {
     description: 'prepare your project',

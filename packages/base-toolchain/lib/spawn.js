@@ -14,9 +14,13 @@ module.exports = function (command, args, options) {
   }
   if (!options) options = {}
 
+  const cwd = options.cwd || process.cwd()
+
   // eslint-disable-next-line no-console
   console.error(
-    chalk`{gray.bold $ ${command} ${args.map(formatArg).join(' ')}}`
+    chalk`{gray.bold ${
+      cwd !== process.cwd() ? `${path.relative('', cwd)} ` : ''
+    }$ ${path.relative(cwd, command)} ${args.map(formatArg).join(' ')}}`
   )
 
   const child = spawn(command, args || {}, { stdio: 'inherit', ...options })
