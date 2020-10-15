@@ -58,6 +58,16 @@ task('test', [...yalcTasks], ({ args }) =>
   spawn(bin('mocha'), ['test/**.js', ...args], { stdio: 'inherit' })
 )
 
+task('format', [baseToolchainDeps], async () => {
+  await spawn(bin('prettier'), ['--write', '*.{js,json,md}'], {
+    stdio: 'inherit',
+  })
+  await spawn(process.execPath, [path.join('lib', 'toolchain.js'), 'format'], {
+    cwd: path.join('packages', 'base-toolchain'),
+    stdio: 'inherit',
+  })
+})
+
 task('check', [baseToolchainDeps], async () => {
   await spawn(bin('prettier'), ['-c', '*.{js,json,md}'], { stdio: 'inherit' })
   await spawn(process.execPath, [path.join('lib', 'toolchain.js'), 'check'], {

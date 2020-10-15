@@ -3,9 +3,14 @@
 [![CircleCI](https://circleci.com/gh/jedwards1211/js-toolchain.svg?style=svg)](https://circleci.com/gh/jedwards1211/js-toolchain)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
-[![npm version](https://badge.fury.io/js/js-toolchain.svg)](https://badge.fury.io/js/js-toolchain)
 
-This is my personal skeleton for creating an npm package with JS(/flow) source code.
+| Package                            | Version                                                                                                                                            |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@jedwards1211/js-toolchain`       | [![npm version](https://badge.fury.io/js/%40jedwards1211%2Fjs-toolchain.svg)](https://badge.fury.io/js/%40jedwards1211%2Fjs-toolchain)             |
+| `@jedwards1211/ts-toolchain`       | [![npm version](https://badge.fury.io/js/%40jedwards1211%2Fts-toolchain.svg)](https://badge.fury.io/js/%40jedwards1211%2Fts-toolchain)             |
+| `@jedwards1211/js-react-toolchain` | [![npm version](https://badge.fury.io/js/%40jedwards1211%2Fjs-react-toolchain.svg)](https://badge.fury.io/js/%40jedwards1211%2Fjs-react-toolchain) |
+
+These are my personal skeletons for creating npm packages with JS(/flow) or TS source code.
 
 ## Assumptions
 
@@ -33,7 +38,7 @@ to see all of the available commands.
 Files to publish are output/copied into the `dist` folder and then published from there. This includes a derived
 `package.json` with various development-only fields removed and automatically-generated `main`, `module`, and `exports` fields added.
 
-The toolchain will do the following:
+The JS toolchains will do the following (similar for TS):
 
 - Transpile `src/**.js` to `dist/**.js` (CommonJS modules)
 - Transpile `src/**.js` to `dist/**.mjs` (ES modules)
