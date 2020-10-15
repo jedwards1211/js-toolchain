@@ -19,13 +19,13 @@ module.exports = function (command, args, options) {
     chalk`{gray.bold $ ${command} ${args.map(formatArg).join(' ')}}`
   )
 
-  return spawn(command, args || {}, { stdio: 'inherit', ...options }).then(
+  const child = spawn(command, args || {}, { stdio: 'inherit', ...options })
+  child.then(
     (result) => {
       // eslint-disable-next-line no-console
       console.error(
         chalk`{green ✔} {bold ${path.basename(command)}} exited with code 0`
       )
-      return result
     },
     (error) => {
       const { code, signal } = error
@@ -39,7 +39,7 @@ module.exports = function (command, args, options) {
           command
         )}} was killed with signal ${signal}`
       }
-      throw error
     }
   )
+  return child
 }
